@@ -1,0 +1,5 @@
+https://docs.google.com/spreadsheets/d/1Rb_1jtl1EWzxG6andnXYFAEntA8ivm_rJ9QrdJM7FQo/edit#gid=0
+
+https://spreadsheets.google.com/feeds/cells/1Rb_1jtl1EWzxG6andnXYFAEntA8ivm_rJ9QrdJM7FQo/od6/public/values?alt=json
+
+https://spreadsheets.google.com/feeds/cells/1caiHm1F0HWENPcKb4cG_gkz5P70MkyWc_W4qX3C7ceo/od6/public/values?alt=json
