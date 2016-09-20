@@ -45,16 +45,19 @@
     
     d3.json("county.json", function(topodata) {
       d3.csv("mapInfo.csv", function(mapInfo) {
-        // console.log('mapInfo = ', mapInfo[0]);
+        console.log('mapInfo = ', mapInfo[0]);
         var result = {};
         for(var i = 0 ; i < mapInfo.length - 1; i++){
+
           if(mapInfo[i]["里"]){
+            // console.log('mapInfo[i]["里"] = ', mapInfo[i]["里"]);
             mapInfo[i]["里"] = mapInfo[i]["里"].replace("台","臺");
             result[mapInfo[i]["里"]] = result[mapInfo[i]["里"]] || {};
-            result[mapInfo[i]["里"]]["兒童暴力"] = mapInfo[i]["兒童暴力"].replace("%", "");
-            result[mapInfo[i]["里"]]["老人暴力"] = mapInfo[i]["老人暴力"].replace("%", "");
-            result[mapInfo[i]["里"]]["親密暴力"] = mapInfo[i]["親密暴力"].replace("%", "");
-            result[mapInfo[i]["里"]]["家庭非上述暴力"] = mapInfo[i]["家庭非上述暴力"].replace("%", "");
+            result[mapInfo[i]["里"]]["兄弟姊妹間暴力"] = mapInfo[i]["兄弟姊妹間暴力"].replace("%", "") || 0;
+            result[mapInfo[i]["里"]]["老人保護"] = mapInfo[i]["老人保護"].replace("%", "") || 0;
+            result[mapInfo[i]["里"]]["兒少保護"] = mapInfo[i]["兒少保護"].replace("%", "") || 0;
+            result[mapInfo[i]["里"]]["親密關係"] = mapInfo[i]["親密關係"].replace("%", "") || 0;
+            // f["親密關係"] = result[f.properties.C_Name + f.properties.T_Name + f.properties.V_Name]["親密關係"] || 0;
           }
         }
         console.log('result = ', result);
@@ -70,16 +73,16 @@
         features = features.map(function(f) {
           // console.log('f.properties.C_Name + f.properties.T_Name + f.properties.V_Name = ', f.properties.C_Name + f.properties.T_Name + f.properties.V_Name);
           if(result[f.properties.C_Name + f.properties.T_Name + f.properties.V_Name]) {
-            // console.log('result = ', result[f.properties.C_Name + f.properties.T_Name + f.properties.V_Name]["兒童暴力"]);
-            f["兒童暴力"] = result[f.properties.C_Name + f.properties.T_Name + f.properties.V_Name]["兒童暴力"] || 0;
-            f["老人暴力"] = result[f.properties.C_Name + f.properties.T_Name + f.properties.V_Name]["老人暴力"] || 0;
-            f["親密暴力"] = result[f.properties.C_Name + f.properties.T_Name + f.properties.V_Name]["親密暴力"] || 0;
-            f["家庭非上述暴力"] = result[f.properties.C_Name + f.properties.T_Name + f.properties.V_Name]["家庭非上述暴力"] || 0;
+            // console.log('result = ', result[f.properties.C_Name + f.properties.T_Name + f.properties.V_Name]["兄弟姊妹間暴力"]);
+            f["兄弟姊妹間暴力"] = result[f.properties.C_Name + f.properties.T_Name + f.properties.V_Name]["兄弟姊妹間暴力"] || 0;
+            f["老人保護"] = result[f.properties.C_Name + f.properties.T_Name + f.properties.V_Name]["老人保護"] || 0;
+            f["兒少保護"] = result[f.properties.C_Name + f.properties.T_Name + f.properties.V_Name]["兒少保護"] || 0;
+            f["親密關係"] = result[f.properties.C_Name + f.properties.T_Name + f.properties.V_Name]["親密關係"] || 0;
           } else {
-            f["兒童暴力"] = 0;
-            f["老人暴力"] = 0;
-            f["親密暴力"] = 0;
-            f["家庭非上述暴力"] = 0;       
+            f["兄弟姊妹間暴力"] = 0;
+            f["老人保護"] = 0;
+            f["兒少保護"] = 0;
+            f["親密關係"] = 0;       
           }
         });
         // for( idx = features.length - 1; idx >= 0; idx-- ) {
@@ -89,9 +92,9 @@
 
         update();
 
-        $(".category li").click(function() {
-          console.log('value = ', $(this).txt());
-        });
+        // $(".category li").click(function() {
+        //   console.log('value = ', $(this).txt());
+        // });
       });
       
 
@@ -100,12 +103,12 @@
           "d": path,
           "fill": function (d) { 
             // console.log(d);
-            return color(d["兒童暴力"]); 
+            return color(d["兄弟姊妹間暴力"]); 
           }
         })
         .on("mouseover", function(d) {
           $("#name").text(d.properties.V_Name);
-          $("#value").text(d["兒童暴力"] + "%");
+          $("#value").text(d["兄弟姊妹間暴力"] + "%");
         });
       }
       // d3.selectAll("path")
@@ -178,20 +181,20 @@
       {
         className: 'village', // optional can be used for styling
         axes: [
-          {axis: "兒童暴力", value: 13}, 
-          {axis: "老人暴力", value: 6}, 
-          {axis: "親密暴力", value: 5},  
-          {axis: "家庭非上述暴力", value: 9},  
+          {axis: "兄弟姊妹間暴力", value: 13}, 
+          {axis: "老人保護", value: 6}, 
+          {axis: "兒少保護", value: 5},  
+          {axis: "親密關係", value: 9},  
           {axis: "其它", value: 2}
         ]
       },
       {
         className: 'average',
         axes: [
-          {axis: "兒童暴力", value: 6}, 
-          {axis: "老人暴力", value: 7}, 
-          {axis: "親密暴力", value: 10},  
-          {axis: "家庭非上述暴力", value: 13},  
+          {axis: "兄弟姊妹間暴力", value: 6}, 
+          {axis: "老人保護", value: 7}, 
+          {axis: "兒少保護", value: 10},  
+          {axis: "親密關係", value: 13},  
           {axis: "其它", value: 9}
         ]
       }
