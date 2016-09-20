@@ -1,511 +1,58 @@
-<html>
-  <head>
-    <meta charset="utf-8" /> 
-    <title>地圖產生器 (實驗版) </title>
-    <link rel="stylesheet" href="css/bootstrap.min.css">
-    <link rel="stylesheet" href="css/radar-chart.css">
-    <link rel="stylesheet" href="css/index.css">
-  </head>
-  <body>
-    <div id="tooltip" class="hidden">
-      <p><strong class="name">Important Label Heading</strong></p>
-      <p><span class="value">100</span>%</p>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="css/bootstrap.min.css">
+  <link rel="stylesheet" href="css/radar-chart.css">
+  <link rel="stylesheet" href="css/index.css">
+  <title>家防案件預警及風險管理系統</title>
+  <script src="//codeorigin.jquery.com/jquery-1.10.2.min.js"></script>
+  <script src="//d3js.org/d3.v3.min.js"></script>
+  <!-- <script src="js/d3.v3.js"></script> -->
+  <!-- <script src="js/labeler.js"></script> -->
+  <!-- <script src="js/d3.geo.projection.v0.min.js"></script> -->
+  <!-- <script src="js/topojson.v1.min.js"></script> -->
+  <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/4.1.1/d3.min.js"></script> -->
+  <script src="https://d3js.org/d3-geo.v1.min.js"></script>
+  <script src="js/radar-chart.js"></script>
+  <script src="http://d3js.org/topojson.v1.min.js"></script>
+
+  <script src="js/index.js"></script>
+</head>
+<body>
+  <!-- <div id="tooltip" class="hidden">
+    <p><strong class="name">Important Label Heading</strong></p>
+    <p><span class="value">100</span>%</p>
+  </div>
+  <h1 id='title' style="visibility: hidden;display: none;"></h1>
+  <h1 class="name">請選擇區域</h1>
+  <div id="details" class="panel panel-default">
+    <div class="panel-body">
+      <div class="chart"></div>
     </div>
-    <h1 id='title' style="visibility: hidden;display: none;"></h1>
-    <h1 class="name">請選擇區域</h1>
-    <div id="details" class="panel panel-default">
-      <div class="panel-body">
-        <!-- <p class="lead">
-          <span id="visualized-metric">Total population</span><br />
-          <span id="visualized-measure">605,759</span>
-        </p> -->
-        <!-- <h4 class="neighborhood">Washington, DC</h4> -->
-        <!-- <table id="pop-info" class="table table-hover">
-          <tr data-type="population_total_val">
-            <td>Population (total)</td>
-            <td class="count align-right"></td>
-          </tr>
-          <tr data-type="population_under_18_val">
-            <td>Population (under 18)</td>
-            <td class="count align-right"></td>
-          </tr>
-          <tr data-type="single_mother_families_perc">
-            <td>Single mother families</td>
-            <td class="count align-right"></td>
-          </tr>
-          <tr data-type="children_in_poverty_perc">
-            <td>Children in poverty</td>
-            <td class="count align-right"></td>
-          </tr>
-        </table> -->
-        <!-- <h4 class="chart">Demographic Breakdown</h4> -->
-        <div class="chart"></div>
-      </div>
-    </div> <!-- narrative cards here -->
-    <div><h1 style="display: inline-block;">value:&nbsp;&nbsp;</h1><h1 class="value" style="display: inline-block;">0</h1></div>
-    <div class="area">
-      <svg width="800px" height="600px" viewBox="0 0 800 600"></svg>
+  </div> -->
+  <ul class="category">
+    <li class="child">
+      <a href="javascript:;">兒童暴力</a>
+    </li>
+    <li class="old_people">
+      <a href="javascript:;">老人暴力</a>
+    </li>
+    <li class="love">
+      <a href="javascript:;">親密暴力</a>
+    </li>
+    <li class="other">
+      <a href="javascript:;">家庭非上述暴力</a>
+    </li>
+  </ul>
+  <div class="map">
+    <svg width="800px" height="600px" viewBox="0 0 800 600"></svg>
+    <div id="info">
+        <div id="name">區域</div>
+        <div id="value">數值</div>
+        <!-- <div id="unit">( 人 / km<sup>2</sup> )</div> -->
     </div>
-    <script src="js/jquery-1.9.1.min.js"></script>
-    <script src="js/d3.v3.js"></script>
-    <script src="js/labeler.js"></script>
-    <!-- <script src="js/d3.geo.projection.v0.min.js"></script> -->
-    <script src="js/topojson.v1.min.js"></script>
-    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/4.1.1/d3.min.js"></script> -->
-    <script src="https://d3js.org/d3-geo.v1.min.js"></script>
-    <script src="js/radar-chart.js"></script>
-    <script type="text/javascript" src="https://d3js.org/topojson.v1.min.js"></script>
-
-    <script>
-      var svg, projection, gmapProjection, path, g, gmap;
-      var activeId = 'dc',
-          choropleth_data, source_data;
-      var all_data = {}, activeData = "population_total";
-      var min_population = 100;
-      var defaultColor = "#aaa";
-      var chartSvg, labels, anchors, links, label_array = [], anchor_array = [];
-      var chartMargin = {top: 30, right: 80, bottom: 10, left: 80};
-      var chartWidth = 268, chartHeight = 150;
-      var w = chartWidth - chartMargin.left - chartMargin.right;
-      var h = chartHeight - chartMargin.top - chartMargin.bottom;
-      var scale = d3.scale.linear().domain([0, 1]).range([h, 0]);
-      var ord_scale = d3.scale.ordinal().domain(["Under 18", "Over 18"]).range([0, w]);
-      var color = d3.scale.category20();
-      var dotRadius = 4;
-
-      function S_GET(id){
-          var a = new RegExp(id+"=([^&#=]*)");
-          var exec = a.exec(window.location.search);
-          return exec && decodeURIComponent(exec[1]);
-      }
-
-
-      var cellsAPI = function(sid,callback){
-       d3.json("https://spreadsheets.google.com/feeds/cells/"+sid+"/od6/public/values?alt=json",function(json){
-          console.log(json);
-          var entries = json.feed.entry;
-          var lines = entries.reduce(function(now,cell){
-            var row = parseInt(cell.gs$cell.row,10);
-            var col = parseInt(cell.gs$cell.col,10);
-
-            now[row] = now[row] || [];
-            now[row][col] = cell.gs$cell.$t;
-            return now;
-          },[]);
-          callback(lines);
-          });
-      };
-
-      var getAreaNumbers = function(sid,callback){
-        cellsAPI(sid,function(lines){
-          console.log('lines = ', lines);
-          var result = {};
-          for(var i = 3 ; i < lines.length;++i){
-            if(lines[i][1]){
-              lines[i][1] = lines[i][1].replace("台","臺");
-              result[lines[i][1]] = result[lines[i][1]] || {};
-              result[lines[i][1]][lines[i][2]] = lines[i][3];
-            }
-          }
-          callback(lines[1][2],result);
-        });
-      }
-      
-
-      d3.json("county.json", function(topodata) {
-        getAreaNumbers(
-          (S_GET("id") || "1caiHm1F0HWENPcKb4cG_gkz5P70MkyWc_W4qX3C7ceo"),function(title,valueMap){
-          document.getElementById("title").innerHTML = (title);
-          var features = topojson.feature(topodata, topodata.objects["Village_NLSC_121_1050715"]).features;
-          d3.csv("mapInfo.csv", function(mapInfo) {
-            // mapInfo['里'].substring(6, 9);
-            console.log('mapInfo = ', mapInfo[3]['里']);
-            // features = features.map(function(f){
-            //   if(valueMap[f.properties.C_Name]){
-            //     f.value =  valueMap[f.properties.C_Name][f.properties.T_Name] || 0;
-            //   }else{
-            //     f.value = 0;
-            //   }
-            //   return f;
-            // });
-          });
-          // console.log(features)
-          features = features.map(function(f){
-            if(valueMap[f.properties.C_Name]){
-              f.value =  valueMap[f.properties.C_Name][f.properties.T_Name] || 0;
-            }else{
-              f.value = 0;
-            }
-            return f;
-          });
-          console.log('features = ', features);
-          // console.log('features = ', features);
-          // var path = d3.geoPath().projection( // 路徑產生器
-          //   d3.geoMercator().center([121.5902,25.10112  ]).scale(80000) // 座標變換函式
-          // );
-
-          //Define map projection
-          var projection = d3.geoMercator()
-                            .center([121.5902,25.10112])
-                            .scale(80000); // 座標變換函式
-          // console.log('projection = ', projection);
-          //Define path generator
-          var path = d3.geo.path()
-                   .projection(projection);
-
-          // var color = d3.scaleLinear().domain([0,100]).range(["#090","#f00"]);
-          var color = d3.scale.linear().domain([0,100]).range(["#090","#f00"]);
-          // var color = d3.scale.quantize()
-          //       .range(["#1f77b4","#ff7f0e","#2ca02c","#d62728"]);
-          // var color = d3.scale.category10();
-          d3.select(".area svg").selectAll("path").data(features)
-            .enter().append("path").attr("d",path).attr("fill",function(d) {
-              // console.log('d.value = ', d.value);
-              // if ( d.value >= 0 && d.value < 25 ) {
-              //   return color(0);
-              // } else if ( d.value >= 25 && d.value < 50 ) {
-              //   return color(1);
-              // } else if ( d.value >= 50 && d.value < 75 ) {
-              //   return color(2);
-              // } else if ( d.value >= 75 && d.value <= 100 ) {
-              //   return color(3);
-              // }
-              return color(d.value);
-            })
-            .attr("d", path )  
-            .on("mouseover",function(d, i){ 
-                $(".name").text(d.properties.T_Name);
-                $(".value").text(d.value);
-                // console.log('d.value = ', d.value);
-                // console.log('d3.select(this) = ', d3.select(this));
-                d3.select(this)  
-                  .attr("fill","#0864AD");
-                // hoverNeighborhood();
-
-                //Get this bar's x/y values, then augment for the tooltip
-                var xPosition = parseFloat(d3.select(this).attr("x"));
-                var yPosition = parseFloat(d3.select(this).attr("y"));
-
-                //Update the tooltip position and value
-                d3.select("#tooltip")
-                  .style("left", 300 + "px")
-                  .style("top", 30 + "px")           
-                  .select("#value")
-                  .text(d);
-               
-                //Show the tooltip
-                d3.select("#tooltip").classed("hidden", false);
-            })  
-            .on("mouseout",function(d,i){  
-                d3.select(this)  
-                  .attr("fill",function(d) {
-                    // if ( d.value >= 0 && d.value < 25 ) {
-                    //   return color(0);
-                    // } else if ( d.value >= 25 && d.value < 50 ) {
-                    //   return color(1);
-                    // } else if ( d.value >= 50 && d.value < 75 ) {
-                    //   return color(2);
-                    // } else if ( d.value >= 75 && d.value <= 100 ) {
-                    //   return color(3);
-                    // }
-                    return color(d.value);
-                  })
-                //Hide the tooltip
-                d3.select("#tooltip").classed("hidden", true);
-            });
-
-            //Load in cities data
-            d3.csv("TaipeiPoliceDepartment.csv", function(data) {
-              // console.log('data = ', data);
-              d3.select(".area svg").selectAll("circle")
-                 .data(data)
-                 .enter()
-                 .append("circle")
-                 .attr("cx", function(d) {
-                   d.lat_lon = d.lat_lon.split(',');
-                  // console.log('d.lat_lon = ', d.lat_lon);
-                  // console.log('d.lat_lon[1] = ', d.lat_lon[1]);
-                  // console.log('d.lat_lon[0] = ', d.lat_lon[0]);
-                   return projection([d.lat_lon[1], d.lat_lon[0]])[0];
-                 })
-                 .attr("cy", function(d) {
-                   // d.lat_lon = d.lat_lon.split(',');
-                   // console.log('cy');
-                   // console.log('d.lat_lon = ', d.lat_lon);
-                   return projection([d.lat_lon[1], d.lat_lon[0]])[1];
-                 })
-                 .attr("r", function(d) {
-                  // console.log('d.population = ', d.population);
-                  // d.population = 8175133;
-                  // return Math.sqrt(parseInt(d.population) * 0.00004);
-                  return 2;
-                 })
-                 .style("fill", "yellow")
-                 .style("opacity", 0.75);
-            });
-        });
-
-        // drawChart();
-
-        // d3.json("county.json", function(topodata) {
-
-        // });
-      });
-      // function drawChart(){
-      //   chartSvg = d3.select(".chart").append("svg").attr("width",chartWidth).attr("height",chartHeight)
-      //     .append("g")
-      //     .attr("transform","translate(" + chartMargin.left + "," + chartMargin.top + ")");
-
-      //   var left_axis = d3.svg.axis().scale(scale).tickFormat("").orient("right").ticks(5);
-      //   var right_axis = d3.svg.axis().scale(scale).tickFormat("").orient("left").ticks(5);
-
-      //   chartSvg.append("g").attr("class","axis").call(left_axis)
-      //     .append("text").text("Under 18").attr("text-anchor","middle").attr("x",0).attr("y",-10);
-
-      //   chartSvg.append("g").attr("class","axis").attr("transform","translate(" + w + ",0)").call(right_axis)
-      //     .append("text").text("總平均").attr("class","axisTitle").attr("text-anchor","middle").attr("x",0).attr("y",-10);
-
-      //   var ethdata = [
-      //     {name: "white", under18: 0.193, over18: 0.370},
-      //     {name: "black", under18: 0.625, over18: 0.449},
-      //     {name: "hispanic", under18: 0.136, over18: 0.087},
-      //     {name: "other", under18: 0.123, over18: 0.093}
-      //   ];
-
-      //   var ethnicity = chartSvg.selectAll(".ethnicity")
-      //       .data(ethdata)
-      //     .enter().append("g")
-      //       .attr("class","ethnicity");
-
-      //   ethnicity.append("line")
-      //     .attr("x1", function(d) { return ord_scale("under18"); })
-      //     .attr("x2", function(d) { return ord_scale("over18"); })
-      //     .attr("y1", function(d) { return scale(d.under18); })
-      //     .attr("y2", function(d) { return scale(d.over18); })
-      //     .style("stroke",function(d){ return color(d.name); })
-      //     .style("stroke-width",2);
-
-      //   drawLabels(ethdata);
-
-      //   // var sim_ann = d3.labeler()
-      //   //   .label(label_array)
-      //   //   .anchor(anchor_array)
-      //   //   .width(w)
-      //   //   .height(h);
-      //   //   sim_ann.start(1000);
-
-      //   redrawLabels();
-      // }
-      // function updateChart(data){
-      //   var ethdata = [
-      //     {name: "white", under18: data.pop_nothisp_white_under18_perc || 0, over18: data.pop_nothisp_white_perc || 0},
-      //     {name: "black", under18: data.pop_nothisp_black_under18_perc || 0, over18: data.pop_nothisp_black_perc || 0},
-      //     {name: "hispanic", under18: data.pop_hisp_under18_perc || 0, over18: data.pop_hisp_perc || 0},
-      //     {name: "other", under18: data.pop_nothisp_other_under18_perc || 0, over18: data.pop_nothisp_other_perc || 0}
-      //   ];
-
-      //   chartSvg.selectAll(".ethnicity line")
-      //     .data(ethdata)
-      //     .transition()
-      //     .duration(500)
-      //     .attr("y1", function(d) { return scale(d.under18); })
-      //     .attr("y2", function(d) { return scale(d.over18); });
-
-      //   drawLabels(ethdata);
-
-      //   // var sim_ann = d3.labeler()
-      //   //   .label(label_array)
-      //   //   .anchor(anchor_array)
-      //   //   .width(w)
-      //   //   .height(h);
-      //   //   sim_ann.start(1000);
-
-      //   redrawLabels();
-      // }
-      // function drawLabels(data){
-      //   label_array = [];
-      //   anchor_array = [];
-      //   var label, anchor;
-      //   for(i=0; i<4; i++){
-      //     label = {
-      //      x: ord_scale("under18"),
-      //      y: scale(data[i].under18),
-      //      width: 0.0,
-      //      height: 0.0,
-      //       name: Math.round(data[i].under18*100) + "% " + data[i].name,
-      //       ethnicity: data[i].name, agegroup: "under18"};
-      //     label_array.push(label);
-
-      //     label = {
-      //      x: ord_scale("over18"),
-      //      y: scale(data[i].over18),
-      //      width: 0.0,
-      //      height: 0.0,
-      //       name: Math.round(data[i].over18*100) + "% " + data[i].name,
-      //       ethnicity: data[i].name, agegroup: "over18"};
-      //     label_array.push(label);
-
-      //     anchor = {x: ord_scale("under18"), y: scale(data[i].under18), r: 4, ethnicity: data[i].name};
-      //     anchor_array.push(anchor);
-
-      //     anchor = {x: ord_scale("over18"), y: scale(data[i].over18), r: 4, ethnicity: data[i].name};
-      //     anchor_array.push(anchor);
-      //   }
-
-      //   chartSvg.selectAll(".dot").data([]).exit().remove();
-      //   chartSvg.selectAll(".label").data([]).exit().remove();
-      //   chartSvg.selectAll(".link").data([]).exit().remove();
-
-      //   labels = chartSvg.selectAll(".label")
-      //     .data(label_array).enter()
-      //     .append("text")
-      //     .attr("class", "label")
-      //     .attr("text-anchor", function(d) {
-      //       if(d.agegroup == "under18") return "end";
-      //       else return "start"; })
-      //     .attr("alignment-baseline","central")
-      //     .text(function(d) { return d.name; })
-      //     .attr("x", function(d) {
-      //      if(d.agegroup == "under18") return d.x - 10;
-      //      else return d.x + 10; })
-      //     .attr("y", function(d) { return (d.y); })
-      //     .attr("fill", function(d) { return color(d.ethnicity); });
-
-      //   var index = 0;
-      //   labels.each(function() {
-      //     label_array[index].width = this.getBBox().width;
-      //     label_array[index].height = this.getBBox().height;
-      //     index += 1;
-      //   });
-
-      //   links = chartSvg.selectAll(".link")
-      //     .data(label_array).enter()
-      //     .append("line")
-      //     .attr("class", "link")
-      //     .attr("x1", function(d) { return (d.x); })
-      //     .attr("y1", function(d) { return (d.y); })
-      //     .attr("x2", function(d) {
-      //      if(d.agegroup =="under18") return d.x - 10;
-      //      else return d.x + 10; })
-      //     .attr("y2", function(d) { return (d.y); });
-
-      //   anchors = chartSvg.selectAll(".dot")
-      //     .data(anchor_array)
-      //     .enter().append("circle")
-      //     .attr("class", "dot")
-      //     .attr("r", function(d) { return (d.r); })
-      //     .attr("cx", function(d) { return (d.x); })
-      //     .attr("cy", function(d) { return (d.y); })
-      //     .style("fill", function(d) { return color(d.ethnicity); });
-      // }
-      // function redrawLabels() {
-      //   labels
-      //   .transition()
-      //   .duration(500)
-      //   //.attr("x", function(d) { return (d.x); })
-      //   .attr("y", function(d) { return (d.y); });
-
-      //   links
-      //   .transition()
-      //   .duration(500)
-      //   //.attr("x2",function(d) { return (d.x); })
-      //   .attr("y2",function(d) { return (d.y); });
-      // }
-      // function hoverNeighborhood(d) {
-      //   // keep active path as the displayed path.
-      //   if($("path.active").length > 0) {
-      //     // keep centered neighborhood path up front
-      //     bringNeighborhoodToFront();
-      //     return;
-      //   }
-
-      //   //bring hovered neighborhood path to front.
-      //   var neighborhood = d3.select(d3.event.target);
-      //   neighborhood.each(function () {
-      //     this.parentNode.appendChild(this);
-      //   });
-
-      //   //but also keep centered neighborhood path up front
-      //   // bringNeighborhoodToFront();
-
-      //   // if (d && all_data[d.properties.gis_id]){
-      //   //   displayPopBox(d);
-      //   //   //last neighborhood to display in popBox.
-      //   //   activeId = d.properties.gis_id;
-
-      //   //   if (activeData !== "no_neighborhood_data") {
-      //   //     setVisMetric(activeData, all_data[activeId][activeData]);
-      //   //     updateChart(all_data[activeId]);
-      //   //   } else {
-      //   //     setVisMetric(null, null, true);
-      //   //   }
-      //   // }
-      //   // ethdata = [
-      //   //   {name: "white", under18: Math.floor(Math.random() * 25) || 0, over18: Math.floor(Math.random() * 25) || 0},
-      //   //   {name: "black", under18: Math.floor(Math.random() * 25) || 0, over18: Math.floor(Math.random() * 25) || 0},
-      //   //   {name: "hispanic", under18: Math.floor(Math.random() * 25) || 0, over18: Math.floor(Math.random() * 25) || 0},
-      //   //   {name: "other", under18: Math.floor(Math.random() * 25) || 0, over18: Math.floor(Math.random() * 25) || 0}
-      //   // ];
-      //   // ethdata = [
-      //   //   {name: "white", under18: 0.993, over18: 0.670},
-      //   //   {name: "black", under18: 0.225, over18: 0.949},
-      //   //   {name: "hispanic", under18: 0.736, over18: 0.587},
-      //   //   {name: "other", under18: 0.823, over18: 0.693}
-      //   // ];
-      //   ethdata = {
-      //     'pop_nothisp_white_under18_perc': '0.' + Math.floor(Math.random() * 100),
-      //     'pop_nothisp_white_perc':  '0.' + Math.floor(Math.random() * 100),
-      //     'pop_nothisp_black_under18_perc':  '0.' + Math.floor(Math.random() * 100),
-      //     'pop_nothisp_black_perc':  '0.' + Math.floor(Math.random() * 100),
-      //     'pop_hisp_under18_perc':  '0.' + Math.floor(Math.random() * 100),
-      //     'pop_hisp_perc':  '0.' + Math.floor(Math.random() * 100),
-      //     'pop_nothisp_other_under18_perc':  '0.' + Math.floor(Math.random() * 100),
-      //     'pop_nothisp_other_perc':  '0.' + Math.floor(Math.random() * 100)
-      //   }
-      //   updateChart(ethdata);
-      // }
-
-      // Radar Chart
-      RadarChart.defaultConfig.color = function() {};
-      RadarChart.defaultConfig.radius = 3;
-      var data = [
-        {
-          className: 'village', // optional can be used for styling
-          axes: [
-            {axis: "兒童暴力", value: 13}, 
-            {axis: "老人暴力", value: 6}, 
-            {axis: "親密暴力", value: 5},  
-            {axis: "家庭非上述暴力", value: 9},  
-            {axis: "其它", value: 2}
-          ]
-        },
-        {
-          className: 'average',
-          axes: [
-            {axis: "兒童暴力", value: 6}, 
-            {axis: "老人暴力", value: 7}, 
-            {axis: "親密暴力", value: 10},  
-            {axis: "家庭非上述暴力", value: 13},  
-            {axis: "其它", value: 9}
-          ]
-        }
-      ];
-      function randomDataset() {
-        return data.map(function(d) {
-          return {
-            className: d.className,
-            axes: d.axes.map(function(axis) {
-              return {axis: axis.axis, value: Math.ceil(Math.random() * 100)};
-            })
-          };
-        });
-      }
-      var chart = RadarChart.chart();
-      var cfg = chart.config({w: 268, h: 268}); // retrieve default config
-      var svg = d3.select('.panel-body div.chart').append('svg')
-        .attr('width', 268)
-        .attr('height', 268);
-      svg.append('g').classed('single', 1).datum(randomDataset()).call(chart);
-    </script>
-  </body>
+  </div>
+</body>
 </html>
