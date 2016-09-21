@@ -42,30 +42,39 @@
              .projection(projection);
 
     var color = d3.scale.linear().domain([0,100]).range(["#090","#f00"]);
+
+    var tooltip = d3.select('.tooltip');
     
     d3.json("county.json", function(topodata) {
       d3.csv("mapInfo.csv", function(mapInfo) {
-        // console.log('mapInfo = ', mapInfo[0]);
+        // console.log('mapInfo = ', mapInfo);
         var result = {};
         var caseCategory = "各里總案件數";
-        for(var i = 0 ; i < mapInfo.length - 1; i++){
+        var TaipeiVillageArr = [];
+        var village;
 
-          if(mapInfo[i]["里"]){
-            // console.log('mapInfo[i]["里"] = ', mapInfo[i]["里"]);
-            mapInfo[i]["里"] = mapInfo[i]["里"].replace("台","臺");
-            result[mapInfo[i]["里"]] = result[mapInfo[i]["里"]] || {};
-            result[mapInfo[i]["里"]]["兄弟姊妹間暴力"] = mapInfo[i]["兄弟姊妹間暴力"].replace("%", "") || 0;
-            result[mapInfo[i]["里"]]["老人保護"] = mapInfo[i]["老人保護"].replace("%", "") || 0;
-            result[mapInfo[i]["里"]]["兒少保護"] = mapInfo[i]["兒少保護"].replace("%", "") || 0;
-            result[mapInfo[i]["里"]]["親密關係"] = mapInfo[i]["親密關係"].replace("%", "") || 0;
-            result[mapInfo[i]["里"]]["其他家虐"] = mapInfo[i]["其他家虐"].replace("%", "") || 0;
-            result[mapInfo[i]["里"]]["低收"] = mapInfo[i]["低收"].replace("%", "") || 0;
-            result[mapInfo[i]["里"]]["障礙"] = mapInfo[i]["障礙"].replace("%", "") || 0;
-            result[mapInfo[i]["里"]]["各里總案件數"] = mapInfo[i]["各里總案件數"].replace("%", "") || 0;
+        for(var i = 0 ; i < mapInfo.length - 1; i++){
+          village = mapInfo[i]["里"];
+          if(village){
+            // console.log('village = ', village);
+            village = village.replace("台","臺");
+            result[village] = result[village] || {};
+            result[village]["兄弟姊妹間暴力"] = mapInfo[i]["兄弟姊妹間暴力"].replace("%", "") || 0;
+            result[village]["老人保護"] = mapInfo[i]["老人保護"].replace("%", "") || 0;
+            result[village]["兒少保護"] = mapInfo[i]["兒少保護"].replace("%", "") || 0;
+            result[village]["親密關係"] = mapInfo[i]["親密關係"].replace("%", "") || 0;
+            result[village]["其他家虐"] = mapInfo[i]["其他家虐"].replace("%", "") || 0;
+            result[village]["低收"] = mapInfo[i]["低收"].replace("%", "") || 0;
+            result[village]["障礙"] = mapInfo[i]["障礙"].replace("%", "") || 0;
+            result[village]["各里總案件數"] = mapInfo[i]["各里總案件數"].replace("%", "") || 0;
+            // if ( village.substring(village.indexOf('市') + 1, village.indexOf('區') + 1) == '大安區' ) {
+              // villageArr.push(result[village])
+              // console.log('dd = ', result[village]);
+            // }
           }
         }
-        console.log('result = ', result);
-        // var TaipeiVillage = [];
+        // console.log('result = ', result);
+        // console.log('village = ', village);
 
         var features = topojson.feature(topodata, topodata.objects["Village_NLSC_121_1050715"]).features;
         // console.log('features = ', features);
@@ -76,8 +85,9 @@
           .append("path")
           .attr("d",path);
 
+        
+
         features = features.map(function(f) {
-          // console.log('f.properties.C_Name + f.properties.T_Name + f.properties.V_Name = ', f.properties.C_Name + f.properties.T_Name + f.properties.V_Name);
           if(result[f.properties.C_Name + f.properties.T_Name + f.properties.V_Name]) {
             // console.log('result = ', result[f.properties.C_Name + f.properties.T_Name + f.properties.V_Name]["兄弟姊妹間暴力"]);
             f["兄弟姊妹間暴力"] = result[f.properties.C_Name + f.properties.T_Name + f.properties.V_Name]["兄弟姊妹間暴力"] || 0;
@@ -88,7 +98,7 @@
             f["低收"] = result[f.properties.C_Name + f.properties.T_Name + f.properties.V_Name]["低收"] || 0;
             f["障礙"] = result[f.properties.C_Name + f.properties.T_Name + f.properties.V_Name]["障礙"] || 0;
             f["各里總案件數"] = result[f.properties.C_Name + f.properties.T_Name + f.properties.V_Name]["各里總案件數"] || 0;
-            // TaipeiVillage.push(f);
+            TaipeiVillageArr.push(f);
           } else {
             f["兄弟姊妹間暴力"] = 0;
             f["老人保護"] = 0;
@@ -100,6 +110,8 @@
             f["各里總案件數"] = 0;      
           }
         });
+        // console.log('features2 = ', features);
+        console.log('TaipeiVillageArr = ', TaipeiVillageArr);
         // var TaipeiVillage = features.map(function(f) {
         // C_Name
         // for( idx = features.length - 1; idx >= 0; idx-- ) {
@@ -112,6 +124,7 @@
         $(".caseCategory").change(function() {
           // console.log('value = ', $(this).val());
           caseCategory = $(this).val();
+          if ( caseCategory == '案件類型') return;
           updateMap(caseCategory);
         });
         $(".area").change(function() {
@@ -140,6 +153,15 @@
           } else {
             $("#value").text(d[caseCategory] + "%");
           }
+
+          var mouse = d3.mouse(svg.node()).map(function(d) {
+              return parseInt(d);
+          });
+          tooltip.classed('hidden', false)
+                .attr('style', 'left:' + (mouse[0] + 10) +
+                        'px; top:' + (mouse[1] + 30) + 'px');
+        }).on('mouseout', function() {
+          tooltip.classed('hidden', true);
         });
       }
       // d3.selectAll("path")
@@ -165,14 +187,14 @@
         //       var yPosition = parseFloat(d3.select(this).attr("y"));
 
         //       //Update the tooltip position and value
-        //       d3.select("#tooltip")
+        //       d3.select(".tooltip")
         //         .style("left", 300 + "px")
         //         .style("top", 30 + "px")           
         //         .select("#value")
         //         .text(d);
              
         //       //Show the tooltip
-        //       d3.select("#tooltip").classed("hidden", false);
+        //       d3.select(".tooltip").classed("hidden", false);
         //   })  
         //   .on("mouseout",function(d,i){  
         //       d3.select(this)  
@@ -180,7 +202,7 @@
         //           return color(d.value);
         //         })
         //       //Hide the tooltip
-        //       d3.select("#tooltip").classed("hidden", true);
+        //       d3.select(".tooltip").classed("hidden", true);
         //   });
 
           //Load in cities data
@@ -204,6 +226,193 @@
           //      .style("opacity", 0.75);
           // });
     });
+
+    // Statistics Chart
+    d3.csv("statistics.csv", type, function(data) {
+      console.log(data)
+      var width = 400,
+          height = 160,
+          margin = {left: 50, top: 30, right: 30, bottom: 30},
+          // svg_width = width + margin.left + margin.right,
+          // svg_height = height + margin.top + margin.bottom,
+          svg_width = 450,
+          svg_height = 250
+          ;
+
+      var scale = d3.scale.linear()
+        .domain([0, d3.max(data, function(d) {return d.value;})])
+        .range([height, 0]);
+
+      var scale_x = d3.scale.ordinal()
+        .domain(data.map(function(d) {return d.type;}))  // 影片有錯，是year，不是population
+        .rangeBands([0, width], 0.1);
+
+      var svg = d3.select(".distribution-Statistics")
+        .append("svg")
+        .attr("width", svg_width)
+        .attr("height", svg_height);
+
+      var chart = svg.append("g")
+        .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+
+      var x_axis = d3.svg.axis().scale(scale_x);
+        y_axis = d3.svg.axis().scale(scale).orient("left").ticks(5);
+
+      chart.append("g")
+        .call(x_axis)
+        .attr("transform", "translate(0, " + height + ")");
+      chart.append("g")
+        .call(y_axis);
+
+      var bar = chart.selectAll(".bar")
+        .data(data)
+        .enter()
+        .append("g")
+        .attr("class", "bar")
+        .attr("transform", function(d, i) {
+          // console.log('scale_x(d.type) = ', scale_x(d.type));
+          return "translate(" + scale_x(d.type) + ", 0)";
+        });
+
+      bar.append("rect")
+        .attr({
+          "y": function(d) {return scale(d.value)},
+          "width": scale_x.rangeBand(),
+          "height": function(d) {return height - scale(d.value)}
+        })
+        .style("fill", "steelblue");
+
+      bar.append("text")
+        .text(function(d) {return d.value})
+        .attr({
+          "y": function(d) {return scale(d.value)},
+          "x": scale_x.rangeBand()/2,
+          "dy": -5,
+          "text-anchor": "middle"
+        })
+
+
+
+      // tempppppp
+      var svg = d3.select(".distribution-Statistics2")
+        .append("svg")
+        .attr("width", svg_width)
+        .attr("height", svg_height);
+
+      var chart = svg.append("g")
+        .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+
+      var x_axis = d3.svg.axis().scale(scale_x);
+        y_axis = d3.svg.axis().scale(scale).orient("left").ticks(5);
+
+      chart.append("g")
+        .call(x_axis)
+        .attr("transform", "translate(0, " + height + ")");
+      chart.append("g")
+        .call(y_axis);
+
+      var bar = chart.selectAll(".bar")
+        .data(data)
+        .enter()
+        .append("g")
+        .attr("class", "bar")
+        .attr("transform", function(d, i) {
+          // console.log('scale_x(d.type) = ', scale_x(d.type));
+          return "translate(" + scale_x(d.type) + ", 0)";
+        });
+
+      bar.append("rect")
+        .attr({
+          "y": function(d) {return scale(d.value)},
+          "width": scale_x.rangeBand(),
+          "height": function(d) {return height - scale(d.value)}
+        })
+        .style("fill", "steelblue");
+
+      // bar.append("text")
+      //   .text(function(d) {return d.value})
+      //   .attr({
+      //     "y": function(d) {return scale(d.value)},
+      //     "x": scale_x.rangeBand()/2,
+      //     "dy": -5,
+      //     "text-anchor": "middle"
+      //   })
+
+
+
+
+        // type2
+      //   var width = 400,
+      //     height = 160,
+      //     margin = {left: 50, top: 30, right: 30, bottom: 30},
+      //     // svg_width = width + margin.left + margin.right,
+      //     // svg_height = height + margin.top + margin.bottom,
+      //     svg_width = 200,
+      //     svg_height = 450
+      //     ;
+
+      // var scale = d3.scale.linear()
+      //   .domain([0, d3.max(data, function(d) {return d.value;})])
+      //   .range([0, width]);
+
+      // var scale_y = d3.scale.ordinal()
+      //   .domain(data.map(function(d) {return d.type;}))  // 影片有錯，是year，不是population
+      //   .rangeBands([0, height], 0.1);
+
+      // var svg = d3.select(".distribution-Statistics2")
+      //   .append("svg")
+      //   .attr("width", svg_width)
+      //   .attr("height", svg_height);
+
+      // var chart = svg.append("g")
+      //   .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+
+      // // var x_axis = d3.svg.axis().scale(scale_x);
+      // //   y_axis = d3.svg.axis().scale(scale).orient("left").ticks(5);
+      // var x_axis = d3.svg.axis().scale(scale).ticks(5);
+      //   y_axis = d3.svg.axis().scale(scale_y);
+
+      // chart.append("g")
+      //   .call(x_axis);
+      //   // .attr("transform", "translate(0, " + height + ")")
+      // chart.append("g")
+      //   .call(y_axis);
+
+      // var bar = chart.selectAll(".bar")
+      //   .data(data)
+      //   .enter()
+      //   .append("g")
+      //   .attr("class", "bar")
+      //   .attr("transform", function(d, i) {
+      //     // console.log('scale_x(d.type) = ', scale_x(d.type));
+      //     return "translate(0, " + scale_y(d.type) + ")";
+      //   });
+
+      // bar.append("rect")
+      //   .attr({
+      //     // "y": function(d) {return scale(d.value)},
+      //     "width": function(d) {return height - scale(d.value)},
+      //     "height": scale_y.rangeBand()
+      //   })
+      //   .style("fill", "steelblue");
+
+      // bar.append("text")
+      //   .text(function(d) {return d.value})
+      //   .attr({
+      //     "y": function(d) {return scale(d.value)},
+      //     "x": scale_x.rangeBand()/2,
+      //     "dy": -5,
+      //     "text-anchor": "middle"
+      //   })
+
+
+
+    });
+    function type(d) {
+      d.value = +d.value;
+      return d;
+    }
+
 
     // Radar Chart
     RadarChart.defaultConfig.color = function() {};
@@ -240,11 +449,11 @@
         };
       });
     }
-    var chart = RadarChart.chart();
-    var cfg = chart.config({w: 268, h: 268}); // retrieve default config
-    var svg = d3.select('.panel-body div.chart').append('svg')
-      .attr('width', 268)
-      .attr('height', 268);
-    svg.append('g').classed('single', 1).datum(randomDataset()).call(chart);
+    // var chart = RadarChart.chart();
+    // var cfg = chart.config({w: 268, h: 268}); // retrieve default config
+    // var svg = d3.select('.panel-body div.chart').append('svg')
+    //   .attr('width', 268)
+    //   .attr('height', 268);
+    // svg.append('g').classed('single', 1).datum(randomDataset()).call(chart);
   });
 })(jQuery)
