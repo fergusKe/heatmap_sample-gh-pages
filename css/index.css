@@ -44,8 +44,13 @@
   stroke: #999;
   stroke-width: 2;
 }
+.domain, .tick line {
+  stroke: gray;
+  stroke-width: 1;
+}
+
 .distribution-Statistics2 text {
-  display: none;
+  /*display: none;*/
 }
 .top10 ul {
   list-style-type: decimal;

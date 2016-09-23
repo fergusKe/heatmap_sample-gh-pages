@@ -92,11 +92,11 @@
           }
           
         });
-        console.log('TaipeiVillageArr = ', TaipeiVillageArr);
-        console.log('TaipeiVillageArr.length = ', TaipeiVillageArr.length);
+        // console.log('TaipeiVillageArr = ', TaipeiVillageArr);
+        // console.log('TaipeiVillageArr.length = ', TaipeiVillageArr.length);
         features = TaipeiVillageArr;
 
-        d3.select("svg")
+        d3.select(".map svg")
           .selectAll("path")
           .data(features)
           .enter()
@@ -128,19 +128,12 @@
           // updateMap(caseCategory);
         });
       });
-      
 
       function updateMap(caseCategory) {
         d3.select("svg")
           .selectAll("path")
-          // .transition()
           .attr({
-          // "d": path,
           "fill": function (d) { 
-            // console.log('d = ', d);
-            // if (d[caseCategory] < 0) {
-            //   return 'transparent'
-            // }
             return color(d[caseCategory]); 
           }
         })
@@ -238,11 +231,11 @@
       var width = 400,
           height = 160,
           margin = {left: 50, top: 30, right: 30, bottom: 30},
-          // svg_width = width + margin.left + margin.right,
-          // svg_height = height + margin.top + margin.bottom,
-          svg_width = 450,
-          svg_height = 250
-          ;
+          svg_width = width + margin.left + margin.right,
+          svg_height = height + margin.top + margin.bottom;
+          // svg_width = 450,
+          // svg_height = 250
+          
 
       var scale = d3.scale.linear()
         .domain([0, d3.max(data, function(d) {return d.value;})])
@@ -296,9 +289,24 @@
           "text-anchor": "middle"
         })
 
+        // type2
+        var width = 400,
+          height = 400,
+          margin = {left: 50, top: 30, right: 30, bottom: 30},
+          // svg_width = width + margin.left + margin.right,
+          // svg_height = height + margin.top + margin.bottom,
+          svg_width = 500,
+          svg_height = 450
+          ;
 
+      var scale = d3.scale.linear()
+        .domain([0, d3.max(data, function(d) {return d.value;})])
+        .range([0, width]);
 
-      // tempppppp
+      var scale_y = d3.scale.ordinal()
+        .domain(data.map(function(d) {return d.type;}))  // 影片有錯，是year，不是population
+        .rangeBands([0, height], 0.1);
+
       var svg = d3.select(".distribution-Statistics2")
         .append("svg")
         .attr("width", svg_width)
@@ -307,14 +315,16 @@
       var chart = svg.append("g")
         .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
 
-      var x_axis = d3.svg.axis().scale(scale_x);
-        y_axis = d3.svg.axis().scale(scale).orient("left").ticks(5);
+      // var x_axis = d3.svg.axis().scale(scale_x);
+      //   y_axis = d3.svg.axis().scale(scale).orient("left").ticks(5);
+      var x_axis = d3.svg.axis().scale(scale).ticks(5);
+        y_axis = d3.svg.axis().scale(scale_y);
 
-      chart.append("g")
-        .call(x_axis)
-        .attr("transform", "translate(0, " + height + ")");
-      chart.append("g")
-        .call(y_axis);
+      // chart.append("g")
+      //   .call(x_axis);
+      //   // .attr("transform", "translate(0, " + height + ")")
+      // chart.append("g")
+      //   .call(y_axis);
 
       var bar = chart.selectAll(".bar")
         .data(data)
@@ -323,92 +333,25 @@
         .attr("class", "bar")
         .attr("transform", function(d, i) {
           // console.log('scale_x(d.type) = ', scale_x(d.type));
-          return "translate(" + scale_x(d.type) + ", 0)";
+          return "translate(0, " + scale_y(d.type) + ")";
         });
 
       bar.append("rect")
         .attr({
-          "y": function(d) {return scale(d.value)},
-          "width": scale_x.rangeBand(),
-          "height": function(d) {return height - scale(d.value)}
+          // "y": function(d) {return scale(d.value)},
+          "width": function(d) {return scale(d.value)},
+          "height": scale_y.rangeBand()
         })
         .style("fill", "steelblue");
 
-      // bar.append("text")
-      //   .text(function(d) {return d.value})
-      //   .attr({
-      //     "y": function(d) {return scale(d.value)},
-      //     "x": scale_x.rangeBand()/2,
-      //     "dy": -5,
-      //     "text-anchor": "middle"
-      //   })
-
-
-
-
-        // type2
-      //   var width = 400,
-      //     height = 160,
-      //     margin = {left: 50, top: 30, right: 30, bottom: 30},
-      //     // svg_width = width + margin.left + margin.right,
-      //     // svg_height = height + margin.top + margin.bottom,
-      //     svg_width = 200,
-      //     svg_height = 450
-      //     ;
-
-      // var scale = d3.scale.linear()
-      //   .domain([0, d3.max(data, function(d) {return d.value;})])
-      //   .range([0, width]);
-
-      // var scale_y = d3.scale.ordinal()
-      //   .domain(data.map(function(d) {return d.type;}))  // 影片有錯，是year，不是population
-      //   .rangeBands([0, height], 0.1);
-
-      // var svg = d3.select(".distribution-Statistics2")
-      //   .append("svg")
-      //   .attr("width", svg_width)
-      //   .attr("height", svg_height);
-
-      // var chart = svg.append("g")
-      //   .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
-
-      // // var x_axis = d3.svg.axis().scale(scale_x);
-      // //   y_axis = d3.svg.axis().scale(scale).orient("left").ticks(5);
-      // var x_axis = d3.svg.axis().scale(scale).ticks(5);
-      //   y_axis = d3.svg.axis().scale(scale_y);
-
-      // chart.append("g")
-      //   .call(x_axis);
-      //   // .attr("transform", "translate(0, " + height + ")")
-      // chart.append("g")
-      //   .call(y_axis);
-
-      // var bar = chart.selectAll(".bar")
-      //   .data(data)
-      //   .enter()
-      //   .append("g")
-      //   .attr("class", "bar")
-      //   .attr("transform", function(d, i) {
-      //     // console.log('scale_x(d.type) = ', scale_x(d.type));
-      //     return "translate(0, " + scale_y(d.type) + ")";
-      //   });
-
-      // bar.append("rect")
-      //   .attr({
-      //     // "y": function(d) {return scale(d.value)},
-      //     "width": function(d) {return height - scale(d.value)},
-      //     "height": scale_y.rangeBand()
-      //   })
-      //   .style("fill", "steelblue");
-
-      // bar.append("text")
-      //   .text(function(d) {return d.value})
-      //   .attr({
-      //     "y": function(d) {return scale(d.value)},
-      //     "x": scale_x.rangeBand()/2,
-      //     "dy": -5,
-      //     "text-anchor": "middle"
-      //   })
+      bar.append("text")
+        .text(function(d) {return d.value})
+        .attr({
+          "x": function(d) {return scale(d.value)},
+          "y": scale_y.rangeBand()/2,
+          "dy": 7,
+          "text-anchor": "end"
+        })
 
 
 
