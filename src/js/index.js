@@ -21,8 +21,8 @@
 
     var tooltip = d3.select('.tooltip');
     
-    d3.json("county.json", function(topodata) {
-      d3.csv("mapInfo.csv", function(mapInfo) {
+    d3.json("data/county.json", function(topodata) {
+      d3.csv("data/mapInfo.csv", function(mapInfo) {
         // console.log('mapInfo = ', mapInfo);
         var result = {};
         var caseCategory = "各里總案件數";
@@ -226,7 +226,7 @@
     }
 
     // Statistics Chart
-    d3.csv("statistics.csv", type, function(data) {
+    d3.csv("data/statistics.csv", stringToNum, function(data) {
       // console.log(data)
       var width = 400,
           height = 160,
@@ -290,14 +290,11 @@
         })
 
         // type2
-        var width = 400,
+        var width = 300,
           height = 400,
-          margin = {left: 50, top: 30, right: 30, bottom: 30},
-          // svg_width = width + margin.left + margin.right,
-          // svg_height = height + margin.top + margin.bottom,
-          svg_width = 500,
-          svg_height = 450
-          ;
+          margin = {left: 110, top: 30, right: 30, bottom: 30},
+          svg_width = width + margin.left + margin.right,
+          svg_height = height + margin.top + margin.bottom;
 
       var scale = d3.scale.linear()
         .domain([0, d3.max(data, function(d) {return d.value;})])
@@ -318,13 +315,13 @@
       // var x_axis = d3.svg.axis().scale(scale_x);
       //   y_axis = d3.svg.axis().scale(scale).orient("left").ticks(5);
       var x_axis = d3.svg.axis().scale(scale).ticks(5);
-        y_axis = d3.svg.axis().scale(scale_y);
+        y_axis = d3.svg.axis().scale(scale_y).orient("left");
 
-      // chart.append("g")
-      //   .call(x_axis);
-      //   // .attr("transform", "translate(0, " + height + ")")
-      // chart.append("g")
-      //   .call(y_axis);
+      chart.append("g")
+        .call(x_axis)
+        .attr("transform", "translate(0, " + height + ")");
+      chart.append("g")
+        .call(y_axis);
 
       var bar = chart.selectAll(".bar")
         .data(data)
@@ -344,19 +341,19 @@
         })
         .style("fill", "steelblue");
 
-      bar.append("text")
-        .text(function(d) {return d.value})
-        .attr({
-          "x": function(d) {return scale(d.value)},
-          "y": scale_y.rangeBand()/2,
-          "dy": 7,
-          "text-anchor": "end"
-        })
+      // bar.append("text")
+      //   .text(function(d) {return d.value})
+      //   .attr({
+      //     "x": function(d) {return scale(d.value)},
+      //     "y": scale_y.rangeBand()/2,
+      //     "dy": 7,
+      //     "text-anchor": "end"
+      //   })
 
 
 
     });
-    function type(d) {
+    function stringToNum(d) {
       d.value = +d.value;
       return d;
     }
