@@ -8,6 +8,7 @@
   <link rel="stylesheet" href="css/index.css">
   <title>家防案件預警及風險管理系統</title>
   <script src="//codeorigin.jquery.com/jquery-1.10.2.min.js"></script>
+  <script src="js/TweenMax.min.js"></script>
   <script src="//d3js.org/d3.v3.min.js"></script>
   <!-- <script src="js/d3.v3.js"></script> -->
   <!-- <script src="js/labeler.js"></script> -->
@@ -21,119 +22,211 @@
   <script src="js/index.js"></script>
 </head>
 <body>
-  <div class="header">
-    <h1 class="h-title">
-      <a href="javascript:;">台北市家庭暴力防治 受害者熱區地圖</a>
-    </h1>
-    <div class="nav">
-      <ul class="navCont">
-        <li class="nav-title1 nav-sub">
-          <a href="javascript:;">圖表樣式</a>
-        </li>
-        <li class="nav-title2 nav-sub">
-          <a href="javascript:;">案件類型</a>
-          
-        </li>
-        <li class="nav-title3 nav-sub">
-          <a href="javascript:;">行政區</a>
-          
-        </li>
-        <li class="nav-title4 nav-sub">
-          <a href="javascript:;">里</a>
-          
-        </li>
-      </ul>
+  <div class="wrap">
+    <div class="header">
+      <h1 class="h-title">
+        <a href="javascript:;">台北市家庭暴力防治 受害者熱區地圖</a>
+      </h1>
+      <div class="nav">
+        <ul class="navCont">
+          <li class="nav-title1 nav-title">
+            <a href="javascript:;">圖表樣式</a>
+            <!-- <ul class="nav-title1-list nav-list">
+              <li><a href="javascript:;">受害者地圖</a></li>
+              <li><a href="javascript:;">親密關係風險地圖</a></li>
+              <li><a href="javascript:;">統計圖表</a></li>
+              <li><a href="javascript:;">各區里重要指標排名</a></li>
+            </ul> -->
+          </li>
+          <li class="nav-title2 nav-title">
+            <a href="javascript:;">案件類型</a>
+            <!-- <ul class="nav-title2-list nav-list">
+              <li><a href="javascript:;">全部</a></li>
+              <li><a href="javascript:;">老人保護</a></li>
+              <li><a href="javascript:;">兒少保護</a></li>
+              <li><a href="javascript:;">親密關係</a></li>
+              <li><a href="javascript:;">其他家虐</a></li>
+            </ul> -->
+          </li>
+          <li class="nav-title3 nav-title">
+            <a href="javascript:;">行政區</a>
+            <!-- <ul class="nav-title3-list nav-list">
+              <li><a href="javascript:;">全部</a></li>
+              <li><a href="javascript:;">中山區</a></li>
+              <li><a href="javascript:;">中正區</a></li>
+              <li><a href="javascript:;">萬華區</a></li>
+            </ul> -->
+          </li>
+          <li class="nav-title4 nav-title">
+            <a href="javascript:;">里</a>
+            <!-- <ul class="nav-title4-list nav-list">
+              <li><a href="javascript:;">全部</a></li>
+              <li><a href="javascript:;">和德里</a></li>
+              <li><a href="javascript:;">社新里</a></li>
+              <li><a href="javascript:;">明義里</a></li>
+            </ul> -->
+          </li>
+        </ul>
+      </div>
     </div>
-  </div>
-  <div class="main">
-    <div class="nav-dropdown">
-      <ul class="nav-title1-list nav-list">
-        <li><a href="javascript:;">受害者地圖</a></li>
-        <li><a href="javascript:;">親密關係風險地圖</a></li>
-        <li><a href="javascript:;">統計圖表</a></li>
-        <li><a href="javascript:;">各區里重要指標排名</a></li>
-      </ul>
-      <ul class="nav-title2-list nav-list">
-        <li><a href="javascript:;">全部</a></li>
-        <li><a href="javascript:;">老人保護</a></li>
-        <li><a href="javascript:;">兒少保護</a></li>
-        <li><a href="javascript:;">親密關係</a></li>
-        <li><a href="javascript:;">其他家虐</a></li>
-      </ul>
-      <ul class="nav-title3-list nav-list">
-        <li><a href="javascript:;">全部</a></li>
-        <li><a href="javascript:;">中山區</a></li>
-        <li><a href="javascript:;">中正區</a></li>
-        <li><a href="javascript:;">萬華區</a></li>
-      </ul>
-      <ul class="nav-title4-list nav-list">
-        <li><a href="javascript:;">全部</a></li>
-        <li><a href="javascript:;">和德里</a></li>
-        <li><a href="javascript:;">社新里</a></li>
-        <li><a href="javascript:;">明義里</a></li>
-      </ul>
+    <div class="main">
+      <div class="nav-dropdown">
+        <div class="nav-title1-list-box nav-list-box">
+          <ul class="nav-title1-list nav-list">
+            <li><a href="javascript:;">受害者地圖</a></li>
+            <li><a href="javascript:;">親密關係風險地圖</a></li>
+            <li><a href="javascript:;">統計圖表</a></li>
+            <li><a href="javascript:;">各區里重要指標排名</a></li>
+          </ul>
+        </div>
+        <div class="nav-title2-list-box nav-list-box">
+          <ul class="nav-title2-list nav-list">
+            <li><a href="javascript:;">全部</a></li>
+            <li><a href="javascript:;">老人保護</a></li>
+            <li><a href="javascript:;">兒少保護</a></li>
+            <li><a href="javascript:;">親密關係</a></li>
+            <li><a href="javascript:;">其他家虐</a></li>
+          </ul>
+        </div>
+        <div class="nav-title3-list-box nav-list-box">
+          <ul class="nav-title3-list nav-list">
+            <li><a href="javascript:;">全部</a></li>
+            <li><a href="javascript:;">中山區</a></li>
+            <li><a href="javascript:;">中正區</a></li>
+            <li><a href="javascript:;">萬華區</a></li>
+            <li><a href="javascript:;">中山區</a></li>
+            <li><a href="javascript:;">中正區</a></li>
+            <li><a href="javascript:;">萬華區</a></li>
+            <li><a href="javascript:;">中山區</a></li>
+            <li><a href="javascript:;">中正區</a></li>
+            <li><a href="javascript:;">萬華區</a></li>
+            <li><a href="javascript:;">中山區</a></li>
+            <li><a href="javascript:;">中正區</a></li>
+            <li><a href="javascript:;">萬華區</a></li>
+            <li><a href="javascript:;">中山區</a></li>
+            <li><a href="javascript:;">中正區</a></li>
+            <li><a href="javascript:;">萬華區</a></li>
+            <li><a href="javascript:;">中山區</a></li>
+            <li><a href="javascript:;">中正區</a></li>
+            <li><a href="javascript:;">萬華區</a></li>
+          </ul>
+        </div>
+        <div class="nav-title4-list-box nav-list-box">
+          <ul class="nav-title4-list nav-list">
+            <li><a href="javascript:;">全部</a></li>
+            <li><a href="javascript:;">和德里</a></li>
+            <li><a href="javascript:;">社新里</a></li>
+            <li><a href="javascript:;">明義里</a></li>
+            <li><a href="javascript:;">和德里</a></li>
+            <li><a href="javascript:;">社新里</a></li>
+            <li><a href="javascript:;">明義里</a></li>
+            <li><a href="javascript:;">和德里</a></li>
+            <li><a href="javascript:;">社新里</a></li>
+            <li><a href="javascript:;">明義里</a></li>
+            <li><a href="javascript:;">和德里</a></li>
+            <li><a href="javascript:;">社新里</a></li>
+            <li><a href="javascript:;">明義里</a></li>
+            <li><a href="javascript:;">和德里</a></li>
+            <li><a href="javascript:;">社新里</a></li>
+            <li><a href="javascript:;">明義里</a></li>
+            <li><a href="javascript:;">和德里</a></li>
+            <li><a href="javascript:;">社新里</a></li>
+            <li><a href="javascript:;">明義里</a></li>
+            <li><a href="javascript:;">和德里</a></li>
+            <li><a href="javascript:;">社新里</a></li>
+            <li><a href="javascript:;">明義里</a></li>
+            <li><a href="javascript:;">和德里</a></li>
+            <li><a href="javascript:;">社新里</a></li>
+            <li><a href="javascript:;">明義里</a></li>
+            <li><a href="javascript:;">和德里</a></li>
+            <li><a href="javascript:;">社新里</a></li>
+            <li><a href="javascript:;">明義里</a></li>
+            <li><a href="javascript:;">和德里</a></li>
+            <li><a href="javascript:;">社新里</a></li>
+            <li><a href="javascript:;">明義里</a></li>
+            <li><a href="javascript:;">和德里</a></li>
+            <li><a href="javascript:;">社新里</a></li>
+            <li><a href="javascript:;">明義里</a></li>
+            <li><a href="javascript:;">和德里</a></li>
+            <li><a href="javascript:;">社新里</a></li>
+            <li><a href="javascript:;">明義里</a></li>
+            <li><a href="javascript:;">和德里</a></li>
+            <li><a href="javascript:;">社新里</a></li>
+            <li><a href="javascript:;">明義里</a></li>
+            <li><a href="javascript:;">和德里</a></li>
+            <li><a href="javascript:;">社新里</a></li>
+            <li><a href="javascript:;">明義里</a></li>
+            <li><a href="javascript:;">和德里</a></li>
+            <li><a href="javascript:;">社新里</a></li>
+            <li><a href="javascript:;">明義里</a></li>
+            <li><a href="javascript:;">和德里</a></li>
+            <li><a href="javascript:;">社新里</a></li>
+            <li><a href="javascript:;">明義里</a></li>
+          </ul>
+        </div>
+      </div>
     </div>
-  </div>
-  
-  <!-- <div id="map"></div> -->
-  
-  <!-- <select class="chartType">
-    <option value="圖表樣式">圖表樣式</option>
-    <option value="受害者地圖">受害者地圖</option>
-    <option value="親密關係風險地圖">親密關係風險地圖</option>
-    <option value="統計圖表">統計圖表</option>
-    <option value="各區里重要指標排名">各區里重要指標排名</option>
-  </select>
-  <select class="caseCategory">
-    <option value="案件類型">案件類型</option>
-    <option value="各里總案件數">全部</option>
-    <option value="老人保護">老人保護</option>
-    <option value="兒少保護">兒少保護</option>
-    <option value="親密關係">親密關係</option>
-    <option value="兄弟姊妹間暴力">其他家虐</option>
-  </select>
-  <select class="area">
-    <option value="行政區">行政區</option>
-    <option value="全部行政區">全部</option>
-    <option value="中山區">中山區</option>
-    <option value="中正區">中正區</option>
-    <option value="萬華區">萬華區</option>
-  </select>
-  <select class="village">
-    <option value="里">里</option>
-    <option value="全部里">全部</option>
-    <option value="和德里">和德里</option>
-    <option value="社新里">社新里</option>
-    <option value="明義里">明義里</option>
-  </select>
-  <input type="text">
-  <button>搜尋</button> -->
+    
+    <!-- <div id="map"></div> -->
+    
+    <!-- <select class="chartType">
+      <option value="圖表樣式">圖表樣式</option>
+      <option value="受害者地圖">受害者地圖</option>
+      <option value="親密關係風險地圖">親密關係風險地圖</option>
+      <option value="統計圖表">統計圖表</option>
+      <option value="各區里重要指標排名">各區里重要指標排名</option>
+    </select>
+    <select class="caseCategory">
+      <option value="案件類型">案件類型</option>
+      <option value="各里總案件數">全部</option>
+      <option value="老人保護">老人保護</option>
+      <option value="兒少保護">兒少保護</option>
+      <option value="親密關係">親密關係</option>
+      <option value="兄弟姊妹間暴力">其他家虐</option>
+    </select>
+    <select class="area">
+      <option value="行政區">行政區</option>
+      <option value="全部行政區">全部</option>
+      <option value="中山區">中山區</option>
+      <option value="中正區">中正區</option>
+      <option value="萬華區">萬華區</option>
+    </select>
+    <select class="village">
+      <option value="里">里</option>
+      <option value="全部里">全部</option>
+      <option value="和德里">和德里</option>
+      <option value="社新里">社新里</option>
+      <option value="明義里">明義里</option>
+    </select>
+    <input type="text">
+    <button>搜尋</button> -->
 
-  <!-- <div class="map">
-    <div class="tooltip hidden">
-      <div id="area">區域</div>
-      <div id="value"></div>
-    </div>
-  </div> -->
-  <div class="right">
-    <!-- <div class="distribution-Statistics axis"></div> -->
-    <!-- <div class="distribution-Statistics2 axis"></div> -->
-    <!-- <div class="top10">
-      <h3>台北市家暴風險分數前十名之里</h3>
-      <ul>
-        <li>萬華區和德里</li>
-        <li>士林區社新里</li>
-        <li>文山區明義里</li>
-        <li>內湖區五分里</li>
-        <li>文山區順興里</li>
-        <li>大同區鄰江里</li>
-        <li>中山區朱園里</li>
-        <li>北投區溫泉里</li>
-        <li>南港區成福里</li>
-        <li>北投區永和里</li>
-      </ul>
+    <!-- <div class="map">
+      <div class="tooltip hidden">
+        <div id="area">區域</div>
+        <div id="value"></div>
+      </div>
     </div> -->
+    <div class="right">
+      <!-- <div class="distribution-Statistics axis"></div> -->
+      <!-- <div class="distribution-Statistics2 axis"></div> -->
+      <!-- <div class="top10">
+        <h3>台北市家暴風險分數前十名之里</h3>
+        <ul>
+          <li>萬華區和德里</li>
+          <li>士林區社新里</li>
+          <li>文山區明義里</li>
+          <li>內湖區五分里</li>
+          <li>文山區順興里</li>
+          <li>大同區鄰江里</li>
+          <li>中山區朱園里</li>
+          <li>北投區溫泉里</li>
+          <li>南港區成福里</li>
+          <li>北投區永和里</li>
+        </ul>
+      </div> -->
+    </div>
+    <!-- <div class="distribution-Statistics2 axis" style="transform: rotate(90deg);position: absolute;top: 802px;left: -112px;"></div> -->
   </div>
-  <!-- <div class="distribution-Statistics2 axis" style="transform: rotate(90deg);position: absolute;top: 802px;left: -112px;"></div> -->
 </body>
 </html>
