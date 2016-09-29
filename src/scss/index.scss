@@ -1,3 +1,136 @@
+$nav-title1: #ef5350;
+$nav-title2: #00bcd4;;
+$nav-title3: #8bc34a;
+$nav-title4: #ffb300;
+
+body {
+  background-color: #757575;
+}
+.nav {
+  vertical-align: top;
+}
+.header {
+  height: 50px;
+  background-color: #424242;
+  .h-title {
+    position: absolute;
+    line-height: 50px;
+    top: 0;
+    left: 10px;
+    a {
+      color: #FFF;
+    }
+  }
+}
+.nav {
+  // display: inline-block;
+  // font-size: 0;
+  .nav-title1 {
+    a {
+      background-color: $nav-title1;
+    }
+    ul {
+      background-color: $nav-title1;
+    }
+  }
+  .nav-title2 {
+    a {
+      background-color: $nav-title2;
+    }
+    ul {
+      background-color: $nav-title2;
+    }
+  }
+  .nav-title3 {
+    a {
+      background-color: $nav-title3;
+    }
+    ul {
+      background-color: $nav-title3;
+    }
+  }
+  .nav-title4 {
+    a {
+      background-color: $nav-title4;
+    }
+    ul {
+      background-color: $nav-title4;
+    }
+  }
+  .navCont {
+    text-align: center;
+    font-size: 0;
+    > li {
+      // position: relative;
+      display: inline-block;
+      // vertical-align: top;
+      font-size: 16px;
+      height: 50px;
+      // line-height: 50px;
+      // text-align: left;
+      > a {
+        line-height: 50px;
+      }
+      &:hover {
+        > a {
+          // color: #ec429a;
+        }
+        ul {
+          display: block;
+        }
+      }
+      // ul {
+      //   // display: none;
+      //   position: absolute;
+      //   width: 100%;
+      //   z-index: 9;
+      //   li {
+      //     line-height: 16px;
+      //     &:hover {
+      //       a {
+      //         // color: #ec429a;
+      //       }
+      //     }
+      //   }
+      // }
+    }
+    a {
+      padding: 0px 30px;
+      color: #FFF;
+      width: auto;;
+    }
+  }
+}
+.main {
+  position: relative;
+}
+.nav-dropdown {
+  position: absolute;
+  top: 0;
+  width: 100%;
+  // height: 5px;
+  // background-color: #A9E;
+}
+.nav-list {
+  display: none;
+  padding: 30px 0;
+  a {
+    color: #FFF;
+  }
+}
+.nav-title1-list {
+  background-color: $nav-title1;
+}
+.nav-title2-list {
+  background-color: $nav-title2;
+}
+.nav-title3-list {
+  background-color: $nav-title3;
+}
+.nav-title4-list {
+  background-color: $nav-title4;
+}
+
 #details {
   position:absolute;
   width:300px;
@@ -62,42 +195,77 @@
   display: inline-block;
 }
 
-.nav {
-  font-size: 0;
+
+
+
+/* leaflet */
+#map {
+  width: 800px;
+  height: 500px;
 }
-.navCont {
-  // text-align: center;
-  font-size: 0;
-  > li {
-    position: relative;
-    display: inline-block;
-    vertical-align: top;
-    font-size: 16px;
-    &:hover {
-      > a {
-        color: #ec429a;
-      }
-      ul {
-        display: block;
-      }
-    }
-    ul {
-      position: absolute;
-      width: 100%;
-      background: #f2f2f2;
-      // display: none;
-      z-index: 9;
-      li {
-        &:hover {
-          a {
-            color: #ec429a;
-          }
-        }
-      }
-    }
+
+.info {
+  padding: 6px 8px;
+  font: 14px/16px Arial, Helvetica, sans-serif;
+  background: white;
+  background: rgba(255,255,255,0.8);
+  box-shadow: 0 0 15px rgba(0,0,0,0.2);
+  border-radius: 5px;
+}
+.info h4 {
+  margin: 0 0 5px;
+  color: #777;
+}
+
+.legend {
+  text-align: left;
+  line-height: 18px;
+  color: #555;
+}
+.legend i {
+  width: 18px;
+  height: 18px;
+  float: left;
+  margin-right: 8px;
+  opacity: 0.7;
+}
+
+
+
+/* leaflet */
+.leaflet-bottom {
+  .leaflet-control-attribution  {
+    display: none;
   }
-  a {
-    padding: 10px 30px;
-    color: #000;
-  }
+}
+
+#map {
+  width: 800px;
+  height: 500px;
+}
+
+.info {
+  padding: 6px 8px;
+  font: 14px/16px Arial, Helvetica, sans-serif;
+  background: white;
+  background: rgba(255,255,255,0.8);
+  box-shadow: 0 0 15px rgba(0,0,0,0.2);
+  border-radius: 5px;
+}
+.info h4 {
+  margin: 0 0 5px;
+  color: #777;
+}
+
+.legend {
+  text-align: left;
+  line-height: 18px;
+  color: #555;
+}
+.legend i {
+  width: 18px;
+  height: 18px;
+  float: left;
+  margin-right: 8px;
+  opacity: 0.7;
 }

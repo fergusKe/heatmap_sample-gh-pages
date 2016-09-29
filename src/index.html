@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="css/normalize.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.0-rc.3/dist/leaflet.css" />
   <link rel="stylesheet" href="css/index.css">
   <title>家防案件預警及風險管理系統</title>
   <script src="//codeorigin.jquery.com/jquery-1.10.2.min.js"></script>
@@ -16,48 +17,66 @@
   <script src="https://d3js.org/d3-geo.v1.min.js"></script>
   <script src="js/radar-chart.js"></script>
   <script src="http://d3js.org/topojson.v1.min.js"></script>
-
+  <script src="https://unpkg.com/leaflet@1.0.0-rc.3/dist/leaflet.js"></script>
   <script src="js/index.js"></script>
 </head>
 <body>
-  <h1>台北市家庭暴力防治 受害者熱區地圖</h1>
-  <div id="nav">
-    <ul class="navCont">
-      <li>
-        <a href="about.htm">品牌概念</a>
-        <ul>
-          <li><a href="javascript:;">item1</a>
-          </li>
-          <li><a href="javascript:;">item2</a>
-          </li>
-          <li><a href="javascript:;">item3</a>
-          </li>
-        </ul>
-      </li>
-      <li>
-        <a href="about.htm">品牌概念</a>
-        <ul>
-          <li><a href="javascript:;">item1</a>
-          </li>
-          <li><a href="javascript:;">item2</a>
-          </li>
-          <li><a href="javascript:;">item3</a>
-          </li>
-        </ul>
-      </li>
-      <li>
-        <a href="about.htm">品牌概念</a>
-        <ul>
-          <li><a href="javascript:;">item1</a>
-          </li>
-          <li><a href="javascript:;">item2</a>
-          </li>
-          <li><a href="javascript:;">item3</a>
-          </li>
-        </ul>
-      </li>
-    </ul>
+  <div class="header">
+    <h1 class="h-title">
+      <a href="javascript:;">台北市家庭暴力防治 受害者熱區地圖</a>
+    </h1>
+    <div class="nav">
+      <ul class="navCont">
+        <li class="nav-title1 nav-sub">
+          <a href="javascript:;">圖表樣式</a>
+        </li>
+        <li class="nav-title2 nav-sub">
+          <a href="javascript:;">案件類型</a>
+          
+        </li>
+        <li class="nav-title3 nav-sub">
+          <a href="javascript:;">行政區</a>
+          
+        </li>
+        <li class="nav-title4 nav-sub">
+          <a href="javascript:;">里</a>
+          
+        </li>
+      </ul>
+    </div>
   </div>
+  <div class="main">
+    <div class="nav-dropdown">
+      <ul class="nav-title1-list nav-list">
+        <li><a href="javascript:;">受害者地圖</a></li>
+        <li><a href="javascript:;">親密關係風險地圖</a></li>
+        <li><a href="javascript:;">統計圖表</a></li>
+        <li><a href="javascript:;">各區里重要指標排名</a></li>
+      </ul>
+      <ul class="nav-title2-list nav-list">
+        <li><a href="javascript:;">全部</a></li>
+        <li><a href="javascript:;">老人保護</a></li>
+        <li><a href="javascript:;">兒少保護</a></li>
+        <li><a href="javascript:;">親密關係</a></li>
+        <li><a href="javascript:;">其他家虐</a></li>
+      </ul>
+      <ul class="nav-title3-list nav-list">
+        <li><a href="javascript:;">全部</a></li>
+        <li><a href="javascript:;">中山區</a></li>
+        <li><a href="javascript:;">中正區</a></li>
+        <li><a href="javascript:;">萬華區</a></li>
+      </ul>
+      <ul class="nav-title4-list nav-list">
+        <li><a href="javascript:;">全部</a></li>
+        <li><a href="javascript:;">和德里</a></li>
+        <li><a href="javascript:;">社新里</a></li>
+        <li><a href="javascript:;">明義里</a></li>
+      </ul>
+    </div>
+  </div>
+  
+  <!-- <div id="map"></div> -->
+  
   <!-- <select class="chartType">
     <option value="圖表樣式">圖表樣式</option>
     <option value="受害者地圖">受害者地圖</option>
@@ -89,6 +108,7 @@
   </select>
   <input type="text">
   <button>搜尋</button> -->
+
   <!-- <div class="map">
     <div class="tooltip hidden">
       <div id="area">區域</div>
@@ -96,8 +116,8 @@
     </div>
   </div> -->
   <div class="right">
-    <div class="distribution-Statistics axis"></div>
-    <div class="distribution-Statistics2 axis"></div>
+    <!-- <div class="distribution-Statistics axis"></div> -->
+    <!-- <div class="distribution-Statistics2 axis"></div> -->
     <!-- <div class="top10">
       <h3>台北市家暴風險分數前十名之里</h3>
       <ul>
