@@ -117,6 +117,9 @@
         id: 'mapbox.light'
       }).addTo(map);
 
+      L.marker([25.138230, 121.535883]).addTo(map)
+      .bindPopup("<b>Hello world!</b><br />I am a popup.").openPopup();
+
 
       // control that shows state info on hover
       var info = L.control();
@@ -128,45 +131,16 @@
       };
 
       info.update = function (props) {
-        console.log('props = ', props);
+        // console.log('props = ', props);
        this._div.innerHTML = '<h4>台北市熱區地圖</h4>' +  (props ?
-         '<b>台北市 ' + props.properties.V_Name + '</b><br />' + '案件數：' + props.thisValue
+         '<b>台北市 ' + props.properties.V_Name + '</b><br />' + '案件數：' + props[caseCategory]
          : 'Hover over a state');
       };
 
       info.addTo(map);
 
-      /*切換行政區*/
-      $(".caseCategory").change(function() {
-        // console.log('value = ', $(this).val());
-        caseCategory = $(this).val();
-        if ( caseCategory == '案件類型') return;
-        // typeOfCases = "全部";
-        // style(features, caseCategory);
-        // updateMap(caseCategory);
-        // console.log('features = ', features);
-        // geojson.resetStyle(villageTopojson);
-        // geojson.setStyle();
-        // geojson = L.geoJson(villageTopojson, {
-        //   style: style,
-        //   onEachFeature: onEachFeature
-        // });
-        // $('.leaflet-pane.leaflet-overlay-pane *').remove();
-        // geojson = L.geoJson(villageTopojson, {
-        //   style: function (feature) {
-        //     console.log('feature = ', feature);
-        //       return {
-        //         weight: 2,
-        //         opacity: 1,
-        //         color: 'white',
-        //         dashArray: '3',
-        //         fillOpacity: 0.7,
-        //         fillColor: getColor(feature["親密關係"])
-        //       };
-        //   },
-        //   onEachFeature: onEachFeature
-        // }).addTo(map);
-      });
+
+      
 
 
       // get color depending on population density value
@@ -220,7 +194,6 @@
       var geojson;
 
       function resetHighlight(e) {
-        console.log('e.target = ', e.target);
        geojson.resetStyle(e.target);
        info.update();
       }
@@ -237,10 +210,10 @@
         });
       }
 
-      // geojson = L.geoJson(villageTopojson, {
-      //   style: style,
-      //   onEachFeature: onEachFeature
-      // }).addTo(map);
+      geojson = L.geoJson(villageTopojson, {
+        style: style,
+        onEachFeature: onEachFeature
+      }).addTo(map);
 
       // geojson = L.geoJson(villageTopojson, {
       //   style: function (feature) {
@@ -256,6 +229,41 @@
       //   },
       //   onEachFeature: onEachFeature
       // }).addTo(map);
+
+      /*切換行政區*/
+      $(".caseCategory").change(function() {
+        // console.log('value = ', $(this).val());
+        caseCategory = $(this).val();
+        if ( caseCategory == '案件類型') return;
+        console.log('caseCategory = ', caseCategory);
+        // typeOfCases = "全部";
+        // style(features, caseCategory);
+        // updateMap(caseCategory);
+        // console.log('features = ', features);
+        // geojson.resetStyle(villageTopojson);
+        // geojson.setStyle();
+        // geojson = L.geoJson(villageTopojson, {
+        //   style: style,
+        //   onEachFeature: onEachFeature
+        // });
+        $('.leaflet-zoom-animated g path').remove();
+        geojson = L.geoJson(villageTopojson, {
+          style: function (feature) {
+            // console.log('feature = ', feature);
+              return {
+                weight: 2,
+                opacity: 1,
+                color: 'white',
+                dashArray: '3',
+                fillOpacity: 0.7,
+                fillColor: getColor(feature[caseCategory])
+              };
+          },
+          onEachFeature: onEachFeature
+        }).addTo(map);
+
+        // geojson.setStyle({fillColor: getColor(30)});;
+      });
 
       map.attributionControl.addAttribution('Population data &copy; <a href="http://census.gov/">US Census Bureau</a>');
 
