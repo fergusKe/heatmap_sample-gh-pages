@@ -227,21 +227,37 @@ body {
 }
 
 .right {
+  position: relative;
   display: inline-block;
   margin-left: 40px;
   color: #FFF;
 }
+.notes {
+  text-align: center;
+  font-size: 18px;
+  span {
+    font-size: 42px;
+    color: #F00;
+    font-weight: 700;
+    margin: 0 5px;
+  }
+}
 .statistic-area {
+  margin-top: 20px;
   h3 {
     font-size: 18px;
     text-align: center;
   }
+}
+.statistic {
+  display: inline-block;
 }
 .top10 {
   display: inline-block;
   text-align: center;
   width: 220px;
   margin-top: 20px;
+  vertical-align: top;
   h3 {
     font-size: 18px;
   }
@@ -251,8 +267,20 @@ body {
   margin: 10px auto 0;
   list-style-type: decimal;
 }
-
-
+.top5 ul {
+  width: 55px;
+  // margin: 10px auto 0;
+  margin-left: 20px;
+  list-style-type: decimal;
+}
+.top5 {
+  position: absolute;
+  top: 602px;
+  left: 0;
+  h3 {
+    font-size: 16px;
+  }
+}
 
 
 

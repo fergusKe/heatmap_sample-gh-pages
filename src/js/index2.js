@@ -318,8 +318,8 @@
     // Statistics Chart
     d3.csv("data/statistics.csv", stringToNum, function(data) {
       // console.log(data)
-      var width = 400,
-          height = 160,
+      var width = 130,
+          height = 140,
           margin = {left: 50, top: 30, right: 30, bottom: 30},
           svg_width = width + margin.left + margin.right,
           svg_height = height + margin.top + margin.bottom;
@@ -379,19 +379,21 @@
         });
 
         // type2
-        var width = 300,
-          height = 400,
-          margin = {left: 110, top: 30, right: 30, bottom: 30},
+        var width = 130,
+          height = 140,
+          margin = {left: 50, top: 30, right: 30, bottom: 30},
           svg_width = width + margin.left + margin.right,
           svg_height = height + margin.top + margin.bottom;
+          // svg_width = 450,
+          // svg_height = 250
 
       var scale = d3.scale.linear()
         .domain([0, d3.max(data, function(d) {return d.value;})])
-        .range([0, width]);
+        .range([height, 0]);
 
-      var scale_y = d3.scale.ordinal()
+      var scale_x = d3.scale.ordinal()
         .domain(data.map(function(d) {return d.type;}))  // 影片有錯，是year，不是population
-        .rangeBands([0, height], 0.1);
+        .rangeBands([0, width], 0.1);
 
       var svg = d3.select(".distribution-Statistics2")
         .append("svg")
@@ -401,10 +403,8 @@
       var chart = svg.append("g")
         .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
 
-      // var x_axis = d3.svg.axis().scale(scale_x);
-      //   y_axis = d3.svg.axis().scale(scale).orient("left").ticks(5);
-      var x_axis = d3.svg.axis().scale(scale).ticks(5);
-        y_axis = d3.svg.axis().scale(scale_y).orient("left");
+      var x_axis = d3.svg.axis().scale(scale_x);
+        y_axis = d3.svg.axis().scale(scale).orient("left").ticks(5);
 
       chart.append("g")
         .call(x_axis)
@@ -419,26 +419,25 @@
         .attr("class", "bar")
         .attr("transform", function(d, i) {
           // console.log('scale_x(d.type) = ', scale_x(d.type));
-          return "translate(0, " + scale_y(d.type) + ")";
+          return "translate(" + scale_x(d.type) + ", 0)";
         });
 
       bar.append("rect")
         .attr({
-          // "y": function(d) {return scale(d.value)},
-          "width": function(d) {return scale(d.value)},
-          "height": scale_y.rangeBand()
+          "y": function(d) {return scale(d.value)},
+          "width": scale_x.rangeBand(),
+          "height": function(d) {return height - scale(d.value)}
         })
         .style("fill", "#489de4");
 
       bar.append("text")
         .text(function(d) {return d.value})
         .attr({
-          "x": function(d) {return scale(d.value)},
-          "y": scale_y.rangeBand()/2,
-          "dx": -5,
-          "dy": 7,
-          "text-anchor": "end"
-        })
+          "y": function(d) {return scale(d.value)},
+          "x": scale_x.rangeBand()/2,
+          "dy": -5,
+          "text-anchor": "middle"
+        });
     });
     function stringToNum(d) {
       d.value = +d.value;
