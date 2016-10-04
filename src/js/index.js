@@ -380,7 +380,7 @@
 
         // type2
         var width = 300,
-          height = 400,
+          height = 200,
           margin = {left: 110, top: 30, right: 30, bottom: 30},
           svg_width = width + margin.left + margin.right,
           svg_height = height + margin.top + margin.bottom;
@@ -391,7 +391,7 @@
 
       var scale_y = d3.scale.ordinal()
         .domain(data.map(function(d) {return d.type;}))  // 影片有錯，是year，不是population
-        .rangeBands([0, height], 0.1);
+        .rangeBands([0, height], 0.15);
 
       var svg = d3.select(".distribution-Statistics2")
         .append("svg")
@@ -436,7 +436,7 @@
           "x": function(d) {return scale(d.value)},
           "y": scale_y.rangeBand()/2,
           "dx": -5,
-          "dy": 7,
+          "dy": 6,
           "text-anchor": "end"
         })
     });
