@@ -316,7 +316,7 @@
     }
 
     // Statistics Chart
-    d3.csv("data/statistics.csv", stringToNum, function(data) {
+    d3.csv("data/gender.csv", stringToNum, function(data) {
       // console.log(data)
       var width = 130,
           height = 140,
@@ -377,8 +377,8 @@
           "dy": -5,
           "text-anchor": "middle"
         });
-
-        // type2
+    });
+     d3.csv("data/age.csv", stringToNum, function(data) {
         var width = 130,
           height = 140,
           margin = {left: 50, top: 30, right: 30, bottom: 30},

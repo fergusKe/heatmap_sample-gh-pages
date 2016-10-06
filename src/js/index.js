@@ -109,7 +109,8 @@
       var map = L.map('map').setView([25.08112, 121.5602], 11);
 
       // https://api.mapbox.com/styles/v1/mapbox/streets-v9/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1IjoiamluZ3RhaSIsImEiOiJjaXRqaWo4aHAwOG8zMm9ta2VreXZndGF3In0.hyQPm7h5ntK-AlLJuYKYhw
-      L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpandmbXliNDBjZWd2M2x6bDk3c2ZtOTkifQ._QA7i5Mpkd_m30IGElHziw', {
+      // https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpandmbXliNDBjZWd2M2x6bDk3c2ZtOTkifQ._QA7i5Mpkd_m30IGElHziw
+      L.tileLayer('https://api.mapbox.com/styles/v1/mapbox/streets-v9/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1IjoiamluZ3RhaSIsImEiOiJjaXRqaWo4aHAwOG8zMm9ta2VreXZndGF3In0.hyQPm7h5ntK-AlLJuYKYhw', {
         maxZoom: 18,
         attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, ' +
           '<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
@@ -145,11 +146,11 @@
 
       // get color depending on population density value
       function getColor(d) {
-        return d > 80 ? '#a50f15' :
-               d > 60  ? '#de2d26' :
-               d > 40  ? '#fb6a4a' :
-               d > 20  ? '#fcae91' :
-                          '#fee5d9';
+        return d > 80 ? '#CC0033' :
+               d > 60  ? '#FF335B' :
+               d > 40  ? '#FF8DA3' :
+               d > 20  ? '#FFCCD6' :
+                          '#F2F2F2';
       }
       // typeOfCases = "全部";
       function style(features, typeOfCases) {
@@ -428,7 +429,7 @@
           "width": function(d) {return scale(d.value)},
           "height": scale_y.rangeBand()
         })
-        .style("fill", "#489de4");
+        .style("fill", "#00bcd4");
 
       bar.append("text")
         .text(function(d) {return d.value})

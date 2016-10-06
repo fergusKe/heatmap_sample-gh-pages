@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="css/normalize.css">
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.0-rc.3/dist/leaflet.css" />
+  <link rel="stylesheet" href="css/common.css">
   <link rel="stylesheet" href="css/index2.css">
   <title>家防案件預警及風險管理系統</title>
   <script src="//codeorigin.jquery.com/jquery-1.10.2.min.js"></script>
@@ -175,16 +176,16 @@
           <!-- <div class="distribution-Statistics axis"></div> -->
           <div class="statistic-area">
             <div class="statistic">
-              <h3>被害人男女比例</h3>
+              <h3 class="title">被害人男女比例</h3>
               <div class="distribution-Statistics axis"></div>
             </div>
             <div class="statistic">
-              <h3>被害人年齡分佈</h3>
+              <h3 class="title">被害人年齡分佈</h3>
               <div class="distribution-Statistics2 axis"></div>
             </div>
           </div>
           <div class="area-top10 top10">
-            <h3>台北市兒少家暴案件數發生<br>區域排名</h3>
+            <h3 class="title">台北市兒少家暴案件數<br>發生區域排名</h3>
             <ul>
               <li>士林區</li>
               <li>文山區</li>
@@ -199,7 +200,7 @@
             </ul>
           </div>
           <div class="village-top10 top10">
-            <h3>台北市兒少家暴案件數發生<br>前三十里</h3>
+            <h3 class="title">台北市兒少家暴案件數<br>發生前三十里</h3>
             <ul>
               <li>和德里</li>
               <li>社新里</li>
@@ -233,8 +234,8 @@
               <li>永和里</li>
             </ul>
           </div>
-          <div class="top5">
-            <h3>
+          <div class="top5 top10">
+            <h3 class="title">
               兒少案件類型
               <select class="chartType">
                 <option value="圖表樣式">士林區</option>
@@ -243,6 +244,7 @@
                 <option value="統計圖表">北投區</option>
                 <option value="各區里重要指標排名">中山區</option>
               </select>
+              <br>
               數量前五大里
             </h3>
             <ul>
