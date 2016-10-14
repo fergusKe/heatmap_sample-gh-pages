@@ -110,7 +110,7 @@
 
       // https://api.mapbox.com/styles/v1/mapbox/streets-v9/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1IjoiamluZ3RhaSIsImEiOiJjaXRqaWo4aHAwOG8zMm9ta2VreXZndGF3In0.hyQPm7h5ntK-AlLJuYKYhw
       // https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpandmbXliNDBjZWd2M2x6bDk3c2ZtOTkifQ._QA7i5Mpkd_m30IGElHziw
-      L.tileLayer('https://api.mapbox.com/styles/v1/mapbox/streets-v9/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1IjoiamluZ3RhaSIsImEiOiJjaXRqaWo4aHAwOG8zMm9ta2VreXZndGF3In0.hyQPm7h5ntK-AlLJuYKYhw', {
+      L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpandmbXliNDBjZWd2M2x6bDk3c2ZtOTkifQ._QA7i5Mpkd_m30IGElHziw', {
         maxZoom: 18,
         attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, ' +
           '<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
@@ -547,6 +547,19 @@
         navObj.index = navNowIndex;
       };
     });
+
+
+    /*data*/
+    // 士林區
+    // $('.nav-title3-list li').eq(1).click(function() {
+      j_area =  $('.nav-title4-list');
+      var area = ['社新里', '福順里', '福華里', '永倫里', '天玉里', '後港里', '芝山里', '社園里', '明勝里', '舊佳里', '名山里', '天和里', '福安里', '社子里', '福佳里', '福中里', '葫蘆里', '聖山里', '天祿里', '葫東里', '天母里', '蘭興里', '富光里', '天山里', '前港里', '忠誠里', '蘭雅里', '富洲里', '福志里', '德華里', '德行里','天壽里',
+                  '福林里', '臨溪里', '百齡里', '天福里', '三玉里', '東山里','福德里', '義信里','承德里','仁勇里','永福里','翠山里','岩山里','陽明里','公館里','溪山里','新安里','菁山里','平等里'];
+      for ( var i = 0; i < area.length; i++ ) {
+          var name = area[i].toString();
+          j_area.append( "<li><a href=\"javascript:;\">" + name + "</a></li>" );
+      } 
+    // });
 
 
   });
