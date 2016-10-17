@@ -332,7 +332,7 @@
 
       var scale_x = d3.scale.ordinal()
         .domain(data.map(function(d) {return d.type;}))  // 影片有錯，是year，不是population
-        .rangeBands([0, width], 0.1);
+        .rangeBands([0, width], 0.5);
 
       var svg = d3.select(".distribution-Statistics")
         .append("svg")
@@ -393,7 +393,7 @@
 
       var scale_x = d3.scale.ordinal()
         .domain(data.map(function(d) {return d.type;}))  // 影片有錯，是year，不是population
-        .rangeBands([0, width], 0.1);
+        .rangeBands([0, width], 0.3);
 
       var svg = d3.select(".distribution-Statistics2")
         .append("svg")

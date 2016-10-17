@@ -51,8 +51,21 @@
             // }
           }
         }
-        // console.log('result = ', result);
-        // console.log('village = ', village);
+        console.log('mapInfo = ', mapInfo);
+        for (var i = 0; i < 1; i++) {
+          for (var j = 0; j < TaipeiAreaArr.length; j++) {
+            if (mapInfo[i]["里"].indexOf(TaipeiAreaArr[j]) >= 0) {
+              console.log('TaipeiAreaArr[j] = ', TaipeiAreaArr[j]);
+              console.log( 'mapInfo[i] = ', mapInfo[i]["里"] );
+              console.log( 'check = ', mapInfo[i]["里"].indexOf(TaipeiAreaArr[j]) );
+            }
+          }
+          // console.log('check = ', checkAvailabilityIndexOf(TaipeiAreaArr, mapInfo[i]["里"]));
+          // if ( checkAvailability(TaipeiAreaArr, mapInfo[i]["里"]) ) {
+          //   // console.log(mapInfo[i]);
+          // }
+        }
+        // console.log('checkAvailability = ', checkAvailability(TaipeiAreaArr, f.properties.T_Name));
         
         var villageTopojson = topojson.feature(topodata, topodata.objects["Village_NLSC_121_1050715"]);
         var features = villageTopojson.features;
@@ -99,6 +112,7 @@
         villageTopojson.features = TaipeiVillageArr;
         // console.log('TaipeiVillageArr = ', TaipeiVillageArr);
         // console.log('villageTopojson = ', villageTopojson);
+
 
         var taipeiStatesData = topojson.feature(topodata, topodata.objects["Village_NLSC_121_1050715"]);
 
@@ -315,6 +329,11 @@
         return val === arrVal;
       });
     }
+    function checkAvailabilityIndexOf(arr, val) {
+      return arr.indexOf(function(arrVal) {
+        return val === arrVal;
+      });
+    }
 
     // Statistics Chart
     d3.csv("data/statistics.csv", stringToNum, function(data) {
@@ -473,7 +492,7 @@
         show: 0
       }]
     }
-    var navHoverShow = 5;
+    var navHoverShowLength = 5;
     var showObj = {
       display: 'block'
     }
@@ -485,7 +504,7 @@
       navTitle.removeClass('active').eq(navNowIndex).addClass('active');
       navLlistBox.css( hideObj ).eq(navNowIndex).css({
         display: 'block',
-        top: -navListHeightArr[navNowIndex] + navHoverShow
+        top: -navListHeightArr[navNowIndex] + navHoverShowLength
       });
       
       // console.log('hover = ', navObj.index);
@@ -557,7 +576,7 @@
                   '福林里', '臨溪里', '百齡里', '天福里', '三玉里', '東山里','福德里', '義信里','承德里','仁勇里','永福里','翠山里','岩山里','陽明里','公館里','溪山里','新安里','菁山里','平等里'];
       for ( var i = 0; i < area.length; i++ ) {
           var name = area[i].toString();
-          j_area.append( "<li><a href=\"javascript:;\">" + name + "</a></li>" );
+          // j_area.append( "<li><a href=\"javascript:;\">" + name + "</a></li>" );
       } 
     // });
 
