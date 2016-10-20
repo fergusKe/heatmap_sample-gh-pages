@@ -3,6 +3,8 @@
     var w = 500;
     var h = 700;
     var TaipeiAreaArr = ["士林區", "文山區", "內湖區", "北投區", "中山區", "大安區", "信義區", "萬華區", "松山區", "大同區", "南港區", "中正區"];
+    var TaipeiAreaInfo = {};
+    TaipeiAreaInfo['全部'] = [];
 
     var svg = d3.select(".map")
                 .append("svg")
@@ -43,46 +45,17 @@
             result[village]["低收"] = mapInfo[i]["低收"].replace("%", "") || 0;
             result[village]["障礙"] = mapInfo[i]["障礙"].replace("%", "") || 0;
             result[village]["各里總案件數"] = mapInfo[i]["各里總案件數"].replace("%", "") || 0;
-            // if ( village.substring(village.indexOf('市') + 1, village.indexOf('區') + 1) == '萬華區' ) {
-            //   // villageArr.push(result[village])
-            //   console.log('village = ', village);
-            //   temp.push(village);
-            //   console.log('temp.length = ', temp.length);
-            // }
           }
         }
-        console.log('mapInfo = ', mapInfo);
-        for (var i = 0; i < 1; i++) {
-          for (var j = 0; j < TaipeiAreaArr.length; j++) {
-            if (mapInfo[i]["里"].indexOf(TaipeiAreaArr[j]) >= 0) {
-              console.log('TaipeiAreaArr[j] = ', TaipeiAreaArr[j]);
-              console.log( 'mapInfo[i] = ', mapInfo[i]["里"] );
-              console.log( 'check = ', mapInfo[i]["里"].indexOf(TaipeiAreaArr[j]) );
-            }
-          }
-          // console.log('check = ', checkAvailabilityIndexOf(TaipeiAreaArr, mapInfo[i]["里"]));
-          // if ( checkAvailability(TaipeiAreaArr, mapInfo[i]["里"]) ) {
-          //   // console.log(mapInfo[i]);
-          // }
-        }
-        // console.log('checkAvailability = ', checkAvailability(TaipeiAreaArr, f.properties.T_Name));
-        
+
         var villageTopojson = topojson.feature(topodata, topodata.objects["Village_NLSC_121_1050715"]);
         var features = villageTopojson.features;
+        
+        
         // console.log('features = ', features);
         
         features = features.map(function(f) {
-          // if (f.properties.T_Name == TaipeiAreaArr) {
-          //   temp.push(f.properties.V_Name);
-          // }
-          // mapInfo[i]["里"]
-          
-          // console.log('f.T_Name = ', f.properties.T_Name);
-          // if ( village.substring(village.indexOf('市') + 1, village.indexOf('區') + 1) == '中正區' ) {
-
-          // }
           if ( f.properties.C_Name === "臺北市" && checkAvailability(TaipeiAreaArr, f.properties.T_Name) ) {
-            TaipeiVillageArr.push(f);
             if(result[f.properties.C_Name + f.properties.T_Name + f.properties.V_Name]) {
               // console.log('result = ', result[f.properties.C_Name + f.properties.T_Name + f.properties.V_Name]["兄弟姊妹間暴力"]);
               f["兄弟姊妹間暴力"] = result[f.properties.C_Name + f.properties.T_Name + f.properties.V_Name]["兄弟姊妹間暴力"] || 0;
@@ -103,16 +76,23 @@
               f["障礙"] = 0;
               f["各里總案件數"] = 0;      
             }
+
+            TaipeiVillageArr.push(f);
+
+            if (!TaipeiAreaInfo[f.properties.T_Name]){
+              TaipeiAreaInfo[f.properties.T_Name]=[];
+            }
+            TaipeiAreaInfo[f.properties.T_Name].push(f);
+
+            TaipeiAreaInfo['全部'].push(f);
           }
-          
         });
-        // console.log('TaipeiVillageArr = ', TaipeiVillageArr);
-        // console.log('TaipeiVillageArr.length = ', TaipeiVillageArr.length);
+        // console.log('TaipeiAreaInfo = ', TaipeiAreaInfo);
         features = TaipeiVillageArr;
         villageTopojson.features = TaipeiVillageArr;
         // console.log('TaipeiVillageArr = ', TaipeiVillageArr);
+        // console.log('TaipeiVillageArr.area = ', TaipeiVillageArr.area);
         // console.log('villageTopojson = ', villageTopojson);
-
 
         var taipeiStatesData = topojson.feature(topodata, topodata.objects["Village_NLSC_121_1050715"]);
 
@@ -160,11 +140,11 @@
 
       // get color depending on population density value
       function getColor(d) {
-        return d > 80 ? '#CC0033' :
-               d > 60  ? '#FF335B' :
-               d > 40  ? '#FF8DA3' :
-               d > 20  ? '#FFCCD6' :
-                          '#F2F2F2';
+        return d > 80 ? '#5A0000' :
+               d > 60  ? '#9C0000' :
+               d > 40  ? '#DE1021' :
+               d > 20  ? '#FF4D52' :
+                          '#FF7D84';
       }
       // typeOfCases = "全部";
       function style(features, typeOfCases) {
@@ -337,67 +317,6 @@
 
     // Statistics Chart
     d3.csv("data/statistics.csv", stringToNum, function(data) {
-      // console.log(data)
-      var width = 400,
-          height = 160,
-          margin = {left: 50, top: 30, right: 30, bottom: 30},
-          svg_width = width + margin.left + margin.right,
-          svg_height = height + margin.top + margin.bottom;
-          // svg_width = 450,
-          // svg_height = 250
-
-      var scale = d3.scale.linear()
-        .domain([0, d3.max(data, function(d) {return d.value;})])
-        .range([height, 0]);
-
-      var scale_x = d3.scale.ordinal()
-        .domain(data.map(function(d) {return d.type;}))  // 影片有錯，是year，不是population
-        .rangeBands([0, width], 0.1);
-
-      var svg = d3.select(".distribution-Statistics")
-        .append("svg")
-        .attr("width", svg_width)
-        .attr("height", svg_height);
-
-      var chart = svg.append("g")
-        .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
-
-      var x_axis = d3.svg.axis().scale(scale_x);
-        y_axis = d3.svg.axis().scale(scale).orient("left").ticks(5);
-
-      chart.append("g")
-        .call(x_axis)
-        .attr("transform", "translate(0, " + height + ")");
-      chart.append("g")
-        .call(y_axis);
-
-      var bar = chart.selectAll(".bar")
-        .data(data)
-        .enter()
-        .append("g")
-        .attr("class", "bar")
-        .attr("transform", function(d, i) {
-          // console.log('scale_x(d.type) = ', scale_x(d.type));
-          return "translate(" + scale_x(d.type) + ", 0)";
-        });
-
-      bar.append("rect")
-        .attr({
-          "y": function(d) {return scale(d.value)},
-          "width": scale_x.rangeBand(),
-          "height": function(d) {return height - scale(d.value)}
-        })
-        .style("fill", "#489de4");
-
-      bar.append("text")
-        .text(function(d) {return d.value})
-        .attr({
-          "y": function(d) {return scale(d.value)},
-          "x": scale_x.rangeBand()/2,
-          "dy": -5,
-          "text-anchor": "middle"
-        });
-
         // type2
         var width = 300,
           height = 200,
@@ -410,10 +329,10 @@
         .range([0, width]);
 
       var scale_y = d3.scale.ordinal()
-        .domain(data.map(function(d) {return d.type;}))  // 影片有錯，是year，不是population
+        .domain(data.map(function(d) {return d.type;}))
         .rangeBands([0, height], 0.15);
 
-      var svg = d3.select(".distribution-Statistics2")
+      var svg = d3.select(".distribution-Statistics")
         .append("svg")
         .attr("width", svg_width)
         .attr("height", svg_height);
@@ -534,7 +453,7 @@
 
       if( navObj.dropdown[navObj.index].show === 1 ) {
         TweenMax.to(navLlistBox.eq(navNowIndex), .3, {
-          top: -navListHeightArr[navNowIndex] + navHoverShow
+          top: -navListHeightArr[navNowIndex] + navHoverShowLength
         });
         // TweenMax.staggerFrom(navLi, .3, {
         //   delay: .3,
@@ -570,14 +489,18 @@
 
     /*data*/
     // 士林區
-    // $('.nav-title3-list li').eq(1).click(function() {
-      j_area =  $('.nav-title4-list');
-      var area = ['社新里', '福順里', '福華里', '永倫里', '天玉里', '後港里', '芝山里', '社園里', '明勝里', '舊佳里', '名山里', '天和里', '福安里', '社子里', '福佳里', '福中里', '葫蘆里', '聖山里', '天祿里', '葫東里', '天母里', '蘭興里', '富光里', '天山里', '前港里', '忠誠里', '蘭雅里', '富洲里', '福志里', '德華里', '德行里','天壽里',
-                  '福林里', '臨溪里', '百齡里', '天福里', '三玉里', '東山里','福德里', '義信里','承德里','仁勇里','永福里','翠山里','岩山里','陽明里','公館里','溪山里','新安里','菁山里','平等里'];
-      for ( var i = 0; i < area.length; i++ ) {
-          var name = area[i].toString();
-          // j_area.append( "<li><a href=\"javascript:;\">" + name + "</a></li>" );
-      } 
+    // $('.nav-title3-list li').click(function() {
+    //   var area = $(this).text();
+    //   var name = '';
+    //   console.log('area = ', area);
+    //   // console.log('TaipeiAreaInfo = ', TaipeiAreaInfo[area]);
+    //   j_navVillageCont =  $('.nav-title4-list');
+    //   for ( var i = 0; i < TaipeiAreaInfo[area].length; i++ ) {
+    //       name = TaipeiAreaInfo[area][i].properties.Substitute;
+    //       j_navVillageCont.append( "<li><a href=\"javascript:;\">" + name + "</a></li>" );
+    //   }
+    //   // navList4_H = $('.nav-title4-list-box').height();
+    //   // navListHeightArr[3] = navListHeightArr;
     // });
 
 
