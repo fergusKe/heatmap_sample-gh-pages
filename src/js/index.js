@@ -389,10 +389,17 @@
     /*show nav-list*/
     var navTitle = $('.nav-title');
     var navLlistBox = $('.nav-list-box');
+    var navLlistBoxLi = $('.nav-list-box li');
     var navList1_H = $('.nav-title1-list-box').height();
     var navList2_H = $('.nav-title2-list-box').height();
     var navList3_H = $('.nav-title3-list-box').height();
     var navList4_H = $('.nav-title4-list-box').height();
+    // var navList1_H = $('.nav-title1-list').outerHeight(true);
+    // var navList2_H = $('.nav-title2-list').outerHeight(true);
+    // var navList3_H = $('.nav-title3-list').outerHeight(true);
+    // var navList4_H = $('.nav-title4-list').outerHeight(true);
+    console.log('navList1_H = ', navList1_H);
+    
     var navListHeightArr = [navList1_H, navList2_H, navList3_H, navList4_H];
     var navNowIndex = 0;
     var navObj = {
@@ -411,7 +418,7 @@
         show: 0
       }]
     }
-    var navHoverShowLength = 5;
+    var navHoverShowHeight = 5;
     var showObj = {
       display: 'block'
     }
@@ -423,7 +430,11 @@
       navTitle.removeClass('active').eq(navNowIndex).addClass('active');
       navLlistBox.css( hideObj ).eq(navNowIndex).css({
         display: 'block',
-        top: -navListHeightArr[navNowIndex] + navHoverShowLength
+        top: -navListHeightArr[navNowIndex] + navHoverShowHeight
+      });
+
+      $('.nav-list-box').css({
+        'overflow-y': 'hidden'
       });
       
       // console.log('hover = ', navObj.index);
@@ -448,12 +459,13 @@
       var navLi = navLlistBox.eq(navNowIndex).find('li');
       var navLiLength = navLi.length;
       navNowIndex = $(this).index();
+
       // console.log('navNowIndex = ', navNowIndex);
       // console.log('navObj.dropdown = ', navObj.dropdown[navNowIndex]);
 
       if( navObj.dropdown[navObj.index].show === 1 ) {
         TweenMax.to(navLlistBox.eq(navNowIndex), .3, {
-          top: -navListHeightArr[navNowIndex] + navHoverShowLength
+          top: -navListHeightArr[navNowIndex] + navHoverShowHeight
         });
         // TweenMax.staggerFrom(navLi, .3, {
         //   delay: .3,
@@ -465,43 +477,62 @@
         // navObj.dropdown[navNowIndex].show = 0;
       } else {
         TweenMax.to(navLlistBox.eq(navNowIndex), .3, {
-          top: 0
+          top: 0,
+          onComplete: function() {
+            $('.nav-list-box').eq(navNowIndex).css({
+              'overflow-y': 'auto'
+            });
+          }
         });
-        if (navLiLength > 10) {
-          TweenMax.staggerFrom(navLi, .3, {
-            delay: .3,
-            top: 30,
-            opacity: 0
-          }, .05);
-        } else {
-          TweenMax.staggerFrom(navLi, .3, {
-            delay: .3,
-            top: 30,
-            opacity: 0
-          }, .1);
-        }
+        TweenMax.staggerFrom(navLi, .3, {
+          delay: .3,
+          top: 30,
+          opacity: 0
+        }, .05);
+        // if (navLiLength > 10) {
+        //   TweenMax.staggerFrom(navLi, .3, {
+        //     delay: .3,
+        //     top: 30,
+        //     opacity: 0
+        //   }, .05);
+        // } else {
+        //   TweenMax.staggerFrom(navLi, .3, {
+        //     delay: .3,
+        //     top: 30,
+        //     opacity: 0
+        //   }, .1);
+        // }
         navObj.dropdown[navObj.index].show = 0;
         navObj.dropdown[navNowIndex].show = 1;
         navObj.index = navNowIndex;
       };
     });
+    navLlistBoxLi.click(function() {
+      $(this).addClass('active').siblings('li').removeClass('active');
+    });
 
 
     /*data*/
-    // 士林區
-    // $('.nav-title3-list li').click(function() {
-    //   var area = $(this).text();
-    //   var name = '';
-    //   console.log('area = ', area);
-    //   // console.log('TaipeiAreaInfo = ', TaipeiAreaInfo[area]);
-    //   j_navVillageCont =  $('.nav-title4-list');
-    //   for ( var i = 0; i < TaipeiAreaInfo[area].length; i++ ) {
-    //       name = TaipeiAreaInfo[area][i].properties.Substitute;
-    //       j_navVillageCont.append( "<li><a href=\"javascript:;\">" + name + "</a></li>" );
-    //   }
-    //   // navList4_H = $('.nav-title4-list-box').height();
-    //   // navListHeightArr[3] = navListHeightArr;
-    // });
+    $('.nav-title3-list li').click(function() {
+      var area = $(this).text();
+      var name = '';
+      var j_navVillageCont =  $('.nav-title4-list');
+      j_navVillageCont.find('li').remove();
+      console.log('area = ', area);
+      // console.log('TaipeiAreaInfo = ', TaipeiAreaInfo[area]);
+      
+      for ( var i = 0; i < TaipeiAreaInfo[area].length; i++ ) {
+          name = TaipeiAreaInfo[area][i].properties.Substitute;
+          j_navVillageCont.append( "<li><a href=\"javascript:;\">" + name + "</a></li>" );
+      }
+      // navList4_H = $('.nav-title4-list-box').height();
+      // navListHeightArr[3] = navListHeightArr;
+      navList4_H = $('.nav-title4-list-box').height();
+      navListHeightArr[3] = navList4_H;
+      console.log('navList4_H = ', navList4_H);
+      console.log('TaipeiAreaInfo[area].length = ', TaipeiAreaInfo[area].length);
+      console.log('navListHeightArr = ', navListHeightArr);
+    });
 
 
   });

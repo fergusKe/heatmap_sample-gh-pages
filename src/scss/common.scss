@@ -193,6 +193,9 @@ body {
     &:hover {
       background-color: darken($nav-title1, 5%);
     }
+    &.active {
+      background-color: darken($nav-title1, 5%);
+    }
   }
 }
 .nav-title2-list-box {
@@ -200,6 +203,9 @@ body {
   li {
     // background-color: $nav-title2;
     &:hover {
+      background-color: darken($nav-title2, 5%);
+    }
+    &.active {
       background-color: darken($nav-title2, 5%);
     }
   }
@@ -211,6 +217,9 @@ body {
     &:hover {
       background-color: darken($nav-title3, 5%);
     }
+    &.active {
+      background-color: darken($nav-title3, 5%);
+    }
   }
 }
 .nav-title4-list-box {
@@ -220,6 +229,9 @@ body {
   li {
     // background-color: $nav-title4;
     &:hover {
+      background-color: darken($nav-title4, 5%);
+    }
+    &.active {
       background-color: darken($nav-title4, 5%);
     }
   }
