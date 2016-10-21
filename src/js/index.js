@@ -388,8 +388,10 @@
     /*nav*/
     /*show nav-list*/
     var navTitle = $('.nav-title');
-    var navLlistBox = $('.nav-list-box');
-    var navLlistBoxLi = $('.nav-list-box li');
+    var navListBox = $('.nav-list-box');
+    var navListBoxLi = $('.nav-list-box li');
+    var navList = $('.nav-list');
+    var navListBoxMaxHeight = 180;
     var navList1_H = $('.nav-title1-list-box').height();
     var navList2_H = $('.nav-title2-list-box').height();
     var navList3_H = $('.nav-title3-list-box').height();
@@ -398,7 +400,7 @@
     // var navList2_H = $('.nav-title2-list').outerHeight(true);
     // var navList3_H = $('.nav-title3-list').outerHeight(true);
     // var navList4_H = $('.nav-title4-list').outerHeight(true);
-    console.log('navList1_H = ', navList1_H);
+    // console.log('navList1_H = ', navList1_H);
     
     var navListHeightArr = [navList1_H, navList2_H, navList3_H, navList4_H];
     var navNowIndex = 0;
@@ -428,10 +430,13 @@
     navTitle.hover(function() {
       navNowIndex = $(this).index();
       navTitle.removeClass('active').eq(navNowIndex).addClass('active');
-      navLlistBox.css( hideObj ).eq(navNowIndex).css({
+      navListBox.css( hideObj ).eq(navNowIndex).css({
         display: 'block',
         top: -navListHeightArr[navNowIndex] + navHoverShowHeight
       });
+      var thisHeihgt = navListBox.eq(navNowIndex).find('ul').outerHeight(true);
+      console.log('thisHeihgt = ', thisHeihgt);
+      // navListHeightArr
 
       $('.nav-list-box').css({
         'overflow-y': 'hidden'
@@ -442,29 +447,36 @@
       navTitle.removeClass('active');
       navObj.index = navNowIndex;
       navObj.dropdown[navObj.index].show = 0;
-      navLlistBox.eq(navObj.index).css( hideObj );
+      navListBox.eq(navObj.index).css( hideObj );
 
       // console.log('leave = ', navObj.index);
     });
-    navLlistBox.hover(function() {
+    navListBox.hover(function() {
       $(this).css( showObj );
       navTitle.removeClass('active').eq(navNowIndex).addClass('active');
     }, function() {
-      navLlistBox.eq(navObj.index).css( hideObj );
+      navListBox.eq(navObj.index).css( hideObj );
       navObj.dropdown[navObj.index].show = 0;
       navTitle.removeClass('active');
     });
 
     navTitle.click(function() {
-      var navLi = navLlistBox.eq(navNowIndex).find('li');
+      // var nowNavListBoxHeight = navListBox.eq(navNowIndex).height();
+      var navLi = navListBox.eq(navNowIndex).find('li');
       var navLiLength = navLi.length;
       navNowIndex = $(this).index();
 
+      // if (nowNavListBoxHeight > navListBoxMaxHeight) {
+      //   console.log('too height');
+      // }
       // console.log('navNowIndex = ', navNowIndex);
       // console.log('navObj.dropdown = ', navObj.dropdown[navNowIndex]);
 
       if( navObj.dropdown[navObj.index].show === 1 ) {
-        TweenMax.to(navLlistBox.eq(navNowIndex), .3, {
+        // $('.nav-list-box').eq(navNowIndex).css({
+        //   'overflow-y': 'hidden'
+        // });
+        TweenMax.to(navListBox.eq(navNowIndex), .3, {
           top: -navListHeightArr[navNowIndex] + navHoverShowHeight
         });
         // TweenMax.staggerFrom(navLi, .3, {
@@ -476,12 +488,12 @@
         navObj.index = navNowIndex;
         // navObj.dropdown[navNowIndex].show = 0;
       } else {
-        TweenMax.to(navLlistBox.eq(navNowIndex), .3, {
+        TweenMax.to(navListBox.eq(navNowIndex), .3, {
           top: 0,
           onComplete: function() {
-            $('.nav-list-box').eq(navNowIndex).css({
-              'overflow-y': 'auto'
-            });
+            // $('.nav-list-box').eq(navNowIndex).css({
+            //   'overflow-y': 'auto'
+            // });
           }
         });
         TweenMax.staggerFrom(navLi, .3, {
@@ -507,7 +519,7 @@
         navObj.index = navNowIndex;
       };
     });
-    navLlistBoxLi.click(function() {
+    navListBoxLi.click(function() {
       $(this).addClass('active').siblings('li').removeClass('active');
     });
 
@@ -527,7 +539,7 @@
       }
       // navList4_H = $('.nav-title4-list-box').height();
       // navListHeightArr[3] = navListHeightArr;
-      navList4_H = $('.nav-title4-list-box').height();
+      navList4_H = $('.nav-title4-list').height();
       navListHeightArr[3] = navList4_H;
       console.log('navList4_H = ', navList4_H);
       console.log('TaipeiAreaInfo[area].length = ', TaipeiAreaInfo[area].length);
