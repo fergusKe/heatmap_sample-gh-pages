@@ -9,7 +9,10 @@ $nav-title4: #ffb300;
   text-align: center;
   font-size: 18px;
   color: $nav-title4;
-  span {
+  .type-name {
+    margin: 0 -4px;
+  }
+  .type-num {
     font-size: 42px;
     // color: #F00;
     font-weight: 700;
