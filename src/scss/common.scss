@@ -159,11 +159,12 @@ body {
   // background-color: #A9E;
 }
 .nav-list-box {
-  display: none;
+  // display: none;
   position: absolute;
   width: 100%;
-  top: 0;
+  top: -1000px;
   left: 0;
+  max-height: 180px;
 }
 .nav-list {
   // display: none;
@@ -223,7 +224,6 @@ body {
   }
 }
 .nav-title4-list-box {
-  max-height: 180px;
   overflow-y: auto;
   background-color: $nav-title4;
   li {

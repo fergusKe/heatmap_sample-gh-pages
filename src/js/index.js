@@ -430,17 +430,27 @@
     navTitle.hover(function() {
       navNowIndex = $(this).index();
       navTitle.removeClass('active').eq(navNowIndex).addClass('active');
+
       navListBox.css( hideObj ).eq(navNowIndex).css({
-        display: 'block',
+        display: 'block'
+      });
+      var nowNavListBoxHeight = navListBox.eq(navNowIndex).find('ul').outerHeight(true);
+      // console.log('nowNavListBoxHeight = ', nowNavListBoxHeight);
+
+      if (nowNavListBoxHeight > 180) {
+        nowNavListBoxHeight = 180;
+      }
+      navListHeightArr[navNowIndex] = nowNavListBoxHeight;
+      // console.log('navListHeightArr = ', navListHeightArr);
+
+      navListBox.eq(navNowIndex).css({
         top: -navListHeightArr[navNowIndex] + navHoverShowHeight
       });
-      var thisHeihgt = navListBox.eq(navNowIndex).find('ul').outerHeight(true);
-      console.log('thisHeihgt = ', thisHeihgt);
-      // navListHeightArr
+      // console.log('top = ', -navListHeightArr[navNowIndex] + navHoverShowHeight);
 
-      $('.nav-list-box').css({
-        'overflow-y': 'hidden'
-      });
+      // $('.nav-list-box').css({
+      //   'overflow-y': 'hidden'
+      // });
       
       // console.log('hover = ', navObj.index);
     }, function() {
@@ -519,7 +529,7 @@
         navObj.index = navNowIndex;
       };
     });
-    navListBoxLi.click(function() {
+    navListBox.on('click', 'li', function() {
       $(this).addClass('active').siblings('li').removeClass('active');
     });
 
@@ -539,11 +549,11 @@
       }
       // navList4_H = $('.nav-title4-list-box').height();
       // navListHeightArr[3] = navListHeightArr;
-      navList4_H = $('.nav-title4-list').height();
-      navListHeightArr[3] = navList4_H;
-      console.log('navList4_H = ', navList4_H);
-      console.log('TaipeiAreaInfo[area].length = ', TaipeiAreaInfo[area].length);
-      console.log('navListHeightArr = ', navListHeightArr);
+      // navList4_H = $('.nav-title4-list').height();
+      // navListHeightArr[3] = navList4_H;
+      // console.log('navList4_H = ', navList4_H);
+      // console.log('TaipeiAreaInfo[area].length = ', TaipeiAreaInfo[area].length);
+      // console.log('navListHeightArr = ', navListHeightArr);
     });
 
 
