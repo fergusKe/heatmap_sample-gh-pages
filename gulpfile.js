@@ -53,7 +53,6 @@ gulp.task('uglify', ['cleanJs'], function() {
 
 gulp.task('tinypng', ['cleanImg'], function () {
     gulp.src('./src/images/**/*.{png,jpg,gif,ico}')
-        // .pipe(tinypng('qtV_OqBBXFMv9oVj--iIl7V-Z4GI49Vl'))
         .pipe(gulp.dest('./dist/images'));
 });
 

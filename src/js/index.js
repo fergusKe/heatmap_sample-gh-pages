@@ -130,17 +130,17 @@
           // console.log('props = ', props);
          this._div.innerHTML = '<h4>台北市熱區地圖</h4>' +  (props ?
            '<b>台北市 ' + props.properties.V_Name + '</b><br />' + '案件數：' + props[caseType]
-           : 'Hover over a state');
+           : '請將滑鼠移至村里位置');
         };
 
         info.addTo(map);
 
         // get color depending on population density value
         function getColor(d) {
-          return d > 80 ? '#5A0000' :
-                 d > 60  ? '#9C0000' :
-                 d > 40  ? '#DE1021' :
-                 d > 20  ? '#FF4D52' :
+          return d > 26 ? '#5A0000' :
+                 d > 21  ? '#9C0000' :
+                 d > 16  ? '#DE1021' :
+                 d > 11  ? '#FF4D52' :
                             '#FF7D84';
         }
         // typeOfCases = "全部";
@@ -253,15 +253,17 @@
 
          var div = L.DomUtil.create('div', 'info legend'),
            grades = [0, 20, 40, 60, 80, 100],
+           grades_data = [1, 11, 16, 21, 26, 65],
            labels = [],
            from, to;
 
          for (var i = 0; i < grades.length - 1; i++) {
            from = grades[i];
+           from_data = grades_data[i]
            to = grades[i + 1];
 
            labels.push(
-             '<i style="background:' + getColor(from + 1) + '"></i> ' +
+             '<i style="background:' + getColor(from_data + 1) + '"></i> ' +
              from + (to ? '&ndash;' + to : '+'));
          }
 
