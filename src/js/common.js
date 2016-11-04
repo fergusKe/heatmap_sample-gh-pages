@@ -1,54 +1,62 @@
 (function($) {
   $(function() {
+    /*loading效果，故意將時間設久一點，當資料讀取完再讓它fadeOut*/
+    $(".fakeloader").fakeLoader({
+        timeToHide:1200000,
+        bgColor:"#0296a9",
+        zIndex: '1001',
+        spinner:"spinner3"
+    });
+
     var w = 500;
     var h = 700;
-    var TaipeiAreaArr = ["士林區", "文山區", "內湖區", "北投區", "中山區", "大安區", "信義區", "萬華區", "松山區", "大同區", "南港區", "中正區"];
-    var TaipeiAreaInfo = {};
-    TaipeiAreaInfo['全部'] = [];
+    var TaipeiAreaNameArr = ["士林區", "文山區", "內湖區", "北投區", "中山區", "大安區", "信義區", "萬華區", "松山區", "大同區", "南港區", "中正區"];
+    var TaipeiAreaObj = {};
+    TaipeiAreaObj['全部'] = [];
+    var TaipeiVillageArr = [];
 		var villageTopojson, features;
 		var caseType = "各里總案件數";
 
+    /*取得台灣地圖資訊及風險指標*/
     d3.json("data/county.json", function(topodata) {
       d3.csv("data/mapInfo.csv", function(mapInfo) {
-        // console.log('mapInfo = ', mapInfo);
         var result = {};
-        var TaipeiVillageArr = [];
         var village;
         var temp = [];
-        for (var i = 0 ; i < mapInfo.length - 1; i++) {
+        for (var i = 0 ; i < mapInfo.length; i++) {
           village = mapInfo[i]["里"];
-          if(village){
-            // console.log('village = ', village);
+          if (village) {
             village = village.replace("台","臺");
             result[village] = result[village] || {};
-            result[village]["兄弟姊妹間暴力"] = mapInfo[i]["兄弟姊妹間暴力"].replace("%", "") || 0;
-            result[village]["老人保護"] = mapInfo[i]["老人保護"].replace("%", "") || 0;
-            result[village]["兒少保護"] = mapInfo[i]["兒少保護"].replace("%", "") || 0;
-            result[village]["親密關係"] = mapInfo[i]["親密關係"].replace("%", "") || 0;
-            result[village]["其他家虐"] = mapInfo[i]["其他家虐"].replace("%", "") || 0;
-            result[village]["低收"] = mapInfo[i]["低收"].replace("%", "") || 0;
-            result[village]["障礙"] = mapInfo[i]["障礙"].replace("%", "") || 0;
-            result[village]["各里總案件數"] = mapInfo[i]["各里總案件數"].replace("%", "") || 0;
+            result[village]["兄弟姊妹間暴力"] = +mapInfo[i]["兄弟姊妹間暴力"].replace("%", "") || 0;
+            result[village]["老人保護"] = +mapInfo[i]["老人保護"].replace("%", "") || 0;
+            result[village]["兒少保護"] = +mapInfo[i]["兒少保護"].replace("%", "") || 0;
+            result[village]["親密關係"] = +mapInfo[i]["親密關係"].replace("%", "") || 0;
+            result[village]["其他家虐"] = +mapInfo[i]["其他家虐"].replace("%", "") || 0;
+            result[village]["低收"] = +mapInfo[i]["低收"].replace("%", "") || 0;
+            result[village]["障礙"] = +mapInfo[i]["障礙"].replace("%", "") || 0;
+            result[village]["各里總案件數"] = +mapInfo[i]["各里總案件數"].replace("%", "") || 0;
           }
         }
 
         villageTopojson = topojson.feature(topodata, topodata.objects["Village_NLSC_121_1050715"]);
         features = villageTopojson.features;
 
+        console.log('result = ', result);
+        console.log('villageTopojson = ', villageTopojson);
         // console.log('features = ', features);
 
         features = features.map(function(f) {
-          if ( f.properties.C_Name === "臺北市" && checkAvailability(TaipeiAreaArr, f.properties.T_Name) ) {
+          if ( f.properties.C_Name === "臺北市" && checkAvailability(TaipeiAreaNameArr, f.properties.T_Name) ) {
             if(result[f.properties.C_Name + f.properties.T_Name + f.properties.V_Name]) {
-              // console.log('result = ', result[f.properties.C_Name + f.properties.T_Name + f.properties.V_Name]["兄弟姊妹間暴力"]);
-              f["兄弟姊妹間暴力"] = result[f.properties.C_Name + f.properties.T_Name + f.properties.V_Name]["兄弟姊妹間暴力"] || 0;
-              f["老人保護"] = result[f.properties.C_Name + f.properties.T_Name + f.properties.V_Name]["老人保護"] || 0;
-              f["兒少保護"] = result[f.properties.C_Name + f.properties.T_Name + f.properties.V_Name]["兒少保護"] || 0;
-              f["親密關係"] = result[f.properties.C_Name + f.properties.T_Name + f.properties.V_Name]["親密關係"] || 0;
-              f["其他家虐"] = result[f.properties.C_Name + f.properties.T_Name + f.properties.V_Name]["其他家虐"] || 0;
-              f["低收"] = result[f.properties.C_Name + f.properties.T_Name + f.properties.V_Name]["低收"] || 0;
-              f["障礙"] = result[f.properties.C_Name + f.properties.T_Name + f.properties.V_Name]["障礙"] || 0;
-              f["各里總案件數"] = result[f.properties.C_Name + f.properties.T_Name + f.properties.V_Name]["各里總案件數"] || 0;
+              f["兄弟姊妹間暴力"] = +result[f.properties.C_Name + f.properties.T_Name + f.properties.V_Name]["兄弟姊妹間暴力"] || 0;
+              f["老人保護"] = +result[f.properties.C_Name + f.properties.T_Name + f.properties.V_Name]["老人保護"] || 0;
+              f["兒少保護"] = +result[f.properties.C_Name + f.properties.T_Name + f.properties.V_Name]["兒少保護"] || 0;
+              f["親密關係"] = +result[f.properties.C_Name + f.properties.T_Name + f.properties.V_Name]["親密關係"] || 0;
+              f["其他家虐"] = +result[f.properties.C_Name + f.properties.T_Name + f.properties.V_Name]["其他家虐"] || 0;
+              f["低收"] = +result[f.properties.C_Name + f.properties.T_Name + f.properties.V_Name]["低收"] || 0;
+              f["障礙"] = +result[f.properties.C_Name + f.properties.T_Name + f.properties.V_Name]["障礙"] || 0;
+              f["各里總案件數"] = +result[f.properties.C_Name + f.properties.T_Name + f.properties.V_Name]["各里總案件數"] || 0;
             } else {
               f["兄弟姊妹間暴力"] = 0;
               f["老人保護"] = 0;
@@ -60,35 +68,42 @@
               f["各里總案件數"] = 0;
             }
 
+            /*所有里的陣列*/
             TaipeiVillageArr.push(f);
 
-            if (!TaipeiAreaInfo[f.properties.T_Name]){
-              TaipeiAreaInfo[f.properties.T_Name]=[];
+            /*將里的陣列用區的做分類*/
+            if (!TaipeiAreaObj[f.properties.T_Name]){
+              TaipeiAreaObj[f.properties.T_Name]=[];
             }
-            TaipeiAreaInfo[f.properties.T_Name].push(f);
+            TaipeiAreaObj[f.properties.T_Name].push(f);
 
-            TaipeiAreaInfo['全部'].push(f);
+            TaipeiAreaObj['全部'].push(f);
           }
         });
         // console.log('features = ', features);
-        // console.log('TaipeiAreaInfo = ', TaipeiAreaInfo);
-        features = TaipeiVillageArr;
-        villageTopojson.features = TaipeiVillageArr;
+        console.log('TaipeiAreaObj = ', TaipeiAreaObj);
+        console.log('TaipeiVillageArr = ', TaipeiVillageArr);
+        // console.log('TaipeiAreaObj[北投區].length = ', TaipeiAreaObj['北投區'].length);
+        // for (var i = 0; i < TaipeiAreaObj['北投區'].length; i++) {
+        //   console.log('bato = ', TaipeiAreaObj['北投區'][i].properties.Substitute);
+        // }
 
-        var taipeiStatesData = topojson.feature(topodata, topodata.objects["Village_NLSC_121_1050715"]);
+        // features = TaipeiVillageArr;
+        villageTopojson.features = TaipeiVillageArr;
+        // console.log('features = ', features);
+        // console.log('villageTopojson.features = ', villageTopojson.features);
+
+        // var taipeiStatesData = topojson.feature(topodata, topodata.objects["Village_NLSC_121_1050715"]);
 
 				setLeaflet();
         setNav();
-
+        $(".fakeloader").fadeOut();
       });
     });
 
 		function setLeaflet() {
-			// var map = L.map('map').setView([37.8, -96], 4);
 			var map = L.map('map').setView([25.08112, 121.5602], 11);
 
-			// https://api.mapbox.com/styles/v1/mapbox/streets-v9/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1IjoiamluZ3RhaSIsImEiOiJjaXRqaWo4aHAwOG8zMm9ta2VreXZndGF3In0.hyQPm7h5ntK-AlLJuYKYhw
-			// https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpandmbXliNDBjZWd2M2x6bDk3c2ZtOTkifQ._QA7i5Mpkd_m30IGElHziw
 			L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpandmbXliNDBjZWd2M2x6bDk3c2ZtOTkifQ._QA7i5Mpkd_m30IGElHziw', {
 				maxZoom: 18,
 				attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, ' +
@@ -184,7 +199,7 @@
 					click: zoomToFeature
 				});
 			}
-
+      console.log('villageTopojson = ', villageTopojson);
 			geojson = L.geoJson(villageTopojson, {
 				style: style,
 				onEachFeature: onEachFeature
@@ -263,6 +278,7 @@
       });
     }
 
+    // console.log('statistics');
     // Statistics Chart
     d3.csv("data/statistics.csv", stringToNum, function(data) {
       // type2
@@ -511,8 +527,8 @@
 
 
       /*data*/
-      // for ( var i = 0; i < TaipeiAreaInfo['全部'].length; i++ ) {
-      //     name = TaipeiAreaInfo[area][i].properties.Substitute;
+      // for ( var i = 0; i < TaipeiAreaObj['全部'].length; i++ ) {
+      //     name = TaipeiAreaObj[area][i].properties.Substitute;
       //     j_navVillageCont.append( "<li><a href=\"javascript:;\">" + name + "</a></li>" );
       // }
       $('.nav-title3-list li').click(function() {
@@ -523,11 +539,11 @@
         var j_navVillageCont =  $('.nav-title4-list');
         j_navVillageCont.find('li').remove();
         // console.log('area = ', area);
-        // console.log('TaipeiAreaInfo = ', TaipeiAreaInfo);
+        // console.log('TaipeiAreaObj = ', TaipeiAreaObj);
 
-        // console.log('TaipeiAreaInfo[area].length = ', TaipeiAreaInfo[area].length);
-        for ( var i = 0; i < TaipeiAreaInfo[area].length; i++ ) {
-            name = TaipeiAreaInfo[area][i].properties.Substitute;
+        // console.log('TaipeiAreaObj[area].length = ', TaipeiAreaObj[area].length);
+        for ( var i = 0; i < TaipeiAreaObj[area].length; i++ ) {
+            name = TaipeiAreaObj[area][i].properties.Substitute;
             j_navVillageCont.append( "<li><a href=\"javascript:;\">" + name + "</a></li>" );
         }
         _navListShow_TL[3] = false;

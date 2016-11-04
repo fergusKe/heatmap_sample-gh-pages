@@ -7,7 +7,7 @@
       if (locationParam) {
         var locationType = locationParam.split("=")[1];
       }
-    
+
     d3.json("data/county.json", function(topodata) {
       d3.csv("data/mapInfo.csv", function(mapInfo) {
         // console.log('mapInfo = ', mapInfo);
@@ -35,7 +35,7 @@
 
         var villageTopojson = topojson.feature(topodata, topodata.objects["Village_NLSC_121_1050715"]);
         var features = villageTopojson.features;
-        
+
         features = features.map(function(f) {
           if ( f.properties.C_Name === "臺北市" && checkAvailability(TaipeiAreaArr, f.properties.T_Name) ) {
             if(result[f.properties.C_Name + f.properties.T_Name + f.properties.V_Name]) {
@@ -51,11 +51,11 @@
               f["兄弟姊妹間暴力"] = 0;
               f["老人保護"] = 0;
               f["兒少保護"] = 0;
-              f["親密關係"] = 0; 
+              f["親密關係"] = 0;
               f["其他家虐"] = 0;
               f["低收"] = 0;
               f["障礙"] = 0;
-              f["各里總案件數"] = 0;      
+              f["各里總案件數"] = 0;
             }
 
             TaipeiVillageArr.push(f);
@@ -126,9 +126,9 @@
           } else {
             features.thisValue = +features[typeOfCases];
           }
-          
+
           // console.log('typeOfCases = ', typeOfCases);
-          
+
 
           if (locationType == 'all') {
             caseType = "各里總案件數";
@@ -162,7 +162,7 @@
             $('.nav-title2-list-box li').eq(4).addClass('active');
           }
           // console.log('features.thisValue = ', features.thisValue);
-          
+
           return {
             weight: 2,
             opacity: 1,
@@ -448,7 +448,7 @@
           "text-anchor": "middle"
         });
     }
-      
+
     function stringToNum(d) {
       d.value = +d.value;
       return d;
@@ -475,7 +475,7 @@
       // var navList3_H = $('.nav-title3-list').outerHeight(true);
       // var navList4_H = $('.nav-title4-list').outerHeight(true);
       // console.log('navList1_H = ', navList1_H);
-      
+
       var navListHeightArr = [navList1_H, navList2_H, navList3_H, navList4_H];
       var navNowIndex = 0;
       var navObj = {
@@ -530,7 +530,7 @@
         // $('.nav-list-box').css({
         //   'overflow-y': 'hidden'
         // });
-        
+
         // console.log('hover = ', navObj.index);
       }, function() {
         navTitle.removeClass('active');
@@ -607,7 +607,7 @@
             _navListShow_TL[navNowIndex] = new TimelineLite();
             if (navNowIndex == 3) {
               navListBox.eq(navNowIndex).find('li:lt(12)').addClass('show');
-              
+
               _navListShow_TL[navNowIndex].add(function() {
                 $('.nav-title4-list-box').animate({scrollTop: 0}, 0);
                 navListBox.eq(navNowIndex).find('li:not(.show)').css({opacity: 0});
@@ -640,7 +640,7 @@
             }
           }
           _navListShow_TL[navNowIndex].restart();
-          
+
           // if (navLiLength > 10) {
           //   TweenMax.staggerFrom(navLi, .3, {
           //     delay: .3,
@@ -678,7 +678,7 @@
         j_navVillageCont.find('li').remove();
         // console.log('area = ', area);
         // console.log('TaipeiAreaInfo = ', TaipeiAreaInfo);
-        
+
         // console.log('TaipeiAreaInfo[area].length = ', TaipeiAreaInfo[area].length);
         for ( var i = 0; i < TaipeiAreaInfo[area].length; i++ ) {
             name = TaipeiAreaInfo[area][i].properties.Substitute;
@@ -692,11 +692,11 @@
     function rankList(pTaipeiAreaInfo) {
       console.log('pTaipeiAreaInfo = ', pTaipeiAreaInfo);
       var arr = [21,20,10,5,56,49,34,26,1,14];
-      
+
       // TaipeiAreaArr
       var areaArr = [];
       // console.log('allArr = ', allArr);
-      var swap = function(data, i, j){ 
+      var swap = function(data, i, j){
           var tmp = data[i];
           data[i] = data[j];
           data[j] = tmp;
@@ -712,8 +712,8 @@
                   }
               }
           }
-      };  
-      
+      };
+
 
       if (locationType == 'all') {
         setAreaTop10();
@@ -813,7 +813,7 @@
             // console.log('caseType = ', caseType);
             setVillageTop5Val();
           }).change();
-          
+
           function setVillageTop5Val() {
             var allArr = pTaipeiAreaInfo[caseType];
             bubbleSort(allArr, ['各里總案件數']);
@@ -926,7 +926,7 @@
             // console.log('caseType = ', caseType);
             setVillageTop5Val();
           }).change();
-          
+
           function setVillageTop5Val() {
             var allArr = pTaipeiAreaInfo[caseType];
             bubbleSort(allArr, ['老人保護']);
@@ -1039,7 +1039,7 @@
             // console.log('caseType = ', caseType);
             setVillageTop5Val();
           }).change();
-          
+
           function setVillageTop5Val() {
             var allArr = pTaipeiAreaInfo[caseType];
             bubbleSort(allArr, ['兒少保護']);
@@ -1152,7 +1152,7 @@
             // console.log('caseType = ', caseType);
             setVillageTop5Val();
           }).change();
-          
+
           function setVillageTop5Val() {
             var allArr = pTaipeiAreaInfo[caseType];
             bubbleSort(allArr, ['親密關係']);
@@ -1172,7 +1172,7 @@
       // for (var i = 0; i < allArr.length; i++) {
       //   // console.log(allArr[i]['各里總案件數']);
       // }
-      
+
     }
 
     /*setCaseType*/
