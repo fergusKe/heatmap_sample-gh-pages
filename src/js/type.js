@@ -4,32 +4,32 @@
     var TaipeiAreaInfo = {};
     TaipeiAreaInfo['全部'] = [];
     var locationParam = location.href.split("?")[1];
-      if (locationParam) {
-        var locationType = locationParam.split("=")[1];
-      }
+    if (locationParam) {
+      var locationType = locationParam.split("=")[1];
+    }
 
     d3.json("data/county.json", function(topodata) {
-      d3.csv("data/mapInfo.csv", function(mapInfo) {
-        // console.log('mapInfo = ', mapInfo);
+      d3.csv("data/case_village.csv", function(caseVillage) {
+        // console.log('caseVillage = ', caseVillage);
         var result = {};
         var caseType = "各里總案件數";
         var TaipeiVillageArr = [];
         var village;
         var temp = [];
-        for (var i = 0 ; i < mapInfo.length - 1; i++) {
-          village = mapInfo[i]["里"];
+        for (var i = 0 ; i < caseVillage.length - 1; i++) {
+          village = caseVillage[i]["里"];
           if(village){
             // console.log('village = ', village);
             village = village.replace("台","臺");
             result[village] = result[village] || {};
-            result[village]["兄弟姊妹間暴力"] = +mapInfo[i]["兄弟姊妹間暴力"].replace("%", "") || 0;
-            result[village]["老人保護"] = +mapInfo[i]["老人保護"].replace("%", "") || 0;
-            result[village]["兒少保護"] = +mapInfo[i]["兒少保護"].replace("%", "") || 0;
-            result[village]["親密關係"] = +mapInfo[i]["親密關係"].replace("%", "") || 0;
-            result[village]["其他家虐"] = +mapInfo[i]["其他家虐"].replace("%", "") || 0;
-            result[village]["低收"] = +mapInfo[i]["低收"].replace("%", "") || 0;
-            result[village]["障礙"] = +mapInfo[i]["障礙"].replace("%", "") || 0;
-            result[village]["各里總案件數"] = +mapInfo[i]["各里總案件數"].replace("%", "") || 0;
+            result[village]["兄弟姊妹間暴力"] = +caseVillage[i]["兄弟姊妹間暴力"].replace("%", "") || 0;
+            result[village]["老人保護"] = +caseVillage[i]["老人保護"].replace("%", "") || 0;
+            result[village]["兒少保護"] = +caseVillage[i]["兒少保護"].replace("%", "") || 0;
+            result[village]["親密關係"] = +caseVillage[i]["親密關係"].replace("%", "") || 0;
+            result[village]["其他家虐"] = +caseVillage[i]["其他家虐"].replace("%", "") || 0;
+            result[village]["低收"] = +caseVillage[i]["低收"].replace("%", "") || 0;
+            result[village]["障礙"] = +caseVillage[i]["障礙"].replace("%", "") || 0;
+            result[village]["各里總案件數"] = +caseVillage[i]["各里總案件數"].replace("%", "") || 0;
           }
         }
 
@@ -215,27 +215,6 @@
           onEachFeature: onEachFeature
         }).addTo(map);
 
-        /*切換行政區*/
-        // $('.nav-title2-list li').click(function() {
-        //   caseType = $(this).attr("name");
-        //   console.log('caseType = ', caseType);
-        //   $('.leaflet-zoom-animated g path').remove();
-        //   geojson = L.geoJson(villageTopojson, {
-        //     style: function (feature) {
-        //       // console.log('feature = ', feature);
-        //         return {
-        //           weight: 2,
-        //           opacity: 1,
-        //           color: 'white',
-        //           dashArray: '3',
-        //           fillOpacity: 0.7,
-        //           fillColor: getColor(feature[caseType])
-        //         };
-        //     },
-        //     onEachFeature: onEachFeature
-        //   }).addTo(map);
-        // });
-
         map.attributionControl.addAttribution('Population data &copy; <a href="http://census.gov/">US Census Bureau</a>');
 
         var legend = L.control({position: 'bottomright'});
@@ -278,11 +257,11 @@
     }
 
     // Statistics Chart
-    d3.csv("data/chart.csv", function(data) {
-      // console.log('data = ', data);
+    d3.csv("data/case_type_statistics.csv", function(data) {
+
       if (locationType == 'all') {
         for (var i = 0; i < data.length; i++) {
-          if ( data[i]['案件類型'] === '全部案件類型') {
+          if (data[i]['案件類型'] === '全部案件類型') {
             // console.log('全部案件類型');
             // console.log('dd = ', data[i]);
             chartGender(data[i]);
@@ -291,7 +270,7 @@
         }
       } else if (locationType == 'old') {
         for (var i = 0; i < data.length; i++) {
-          if ( data[i]['案件類型'] === '老人保護') {
+          if (data[i]['案件類型'] === '老人保護') {
             // console.log('老人保護');
             // console.log('dd = ', data[i]);
             chartGender(data[i]);
@@ -300,7 +279,7 @@
         }
       } else if (locationType == 'children') {
         for (var i = 0; i < data.length; i++) {
-          if ( data[i]['案件類型'] === '兒少保護') {
+          if (data[i]['案件類型'] === '兒少保護') {
             // console.log('兒少保護');
             // console.log('dd = ', data[i]);
             chartGender(data[i]);
@@ -309,7 +288,7 @@
         }
       } else if (locationType == 'intimate') {
         for (var i = 0; i < data.length; i++) {
-          if ( data[i]['案件類型'] === '親密關係') {
+          if (data[i]['案件類型'] === '親密關係') {
             // console.log('親密關係');
             // console.log('dd = ', data[i]);
             chartGender(data[i]);
@@ -384,11 +363,13 @@
         });
     }
     function chartAge(pData) {
+      console.log('pData = ', pData);
       var data = [
         {type: '~18', value: +pData['小於18歲'].replace("%", "")},
         {type: '18~65', value: +pData['18到65歲'].replace("%", "")},
         {type: '65~', value: +pData['大於65歲'].replace("%", "")}
-      ]
+      ];
+      console.log('data = ', data);
 
       var width = 130,
         height = 140,
@@ -401,7 +382,7 @@
         .range([height, 0]);
 
       var scale_x = d3.scale.ordinal()
-        .domain(data.map(function(d) {return d.type;}))  // 影片有錯，是year，不是population
+        .domain(data.map(function(d) {return d.type;}))
         .rangeBands([0, width], 0.3);
 
       var svg = d3.select(".distribution-Statistics2")
@@ -716,494 +697,261 @@
 
 
       if (locationType == 'all') {
-        setAreaTop10();
-        setVillageTop30();
-        setVillageTop5();
-        // features.thisValue = +features["各里總案件數"];
-        function setAreaTop10() {
-          var totalArr = [];
-          var total = 0;
-          for (var i = 0; i < TaipeiAreaArr.length; i++) {
-            total = 0;
-            for (var j = 0; j < pTaipeiAreaInfo[TaipeiAreaArr[i]].length; j++) {
-              total += pTaipeiAreaInfo[TaipeiAreaArr[i]][j]['各里總案件數'];
-            }
-            // console.log('pTaipeiAreaInfo[TaipeiAreaArr[i]] = ', pTaipeiAreaInfo[TaipeiAreaArr[i]]);
-            // console.log('pTaipeiAreaInfo[TaipeiAreaArr[i]].length = ', pTaipeiAreaInfo[TaipeiAreaArr[i]].length);
-            // console.log('total = ', total);
-            totalArr[i] = total
-          }
-          // console.log('TaipeiAreaArr = ', TaipeiAreaArr);
-          // console.log('totalArr = ', totalArr);
-          // bubbleSort(totalArr);
-          // console.log('totalArr = ', totalArr);
-          var totalObj = [
-            {
-              "name": "士林區",
-              "value": 1046
-            },
-            {
-              "name": "文山區",
-              "value": 957
-            },
-            {
-              "name": "內湖區",
-              "value": 896
-            },
-            {
-              "name": "北投區",
-              "value": 785
-            },
-            {
-              "name": "中山區",
-              "value": 782
-            },
-            {
-              "name": "大安區",
-              "value": 782
-            },
-            {
-              "name": "萬華區",
-              "value": 756
-            },
-            {
-              "name": "信義區",
-              "value": 756
-            },
-            {
-              "name": "松山區",
-              "value": 631
-            },
-            {
-              "name": "大同區",
-              "value": 587
-            },
-            {
-              "name": "南港區",
-              "value": 439
-            },
-            {
-              "name": "中正區",
-              "value": 410
-            },
-          ];
-          // console.log('totalObj[0] = ', totalObj[0]);
-          var html = '';
-          for (var i = 0; i < 10; i++) {
-            // console.log('allArr[i] = ', allArr[i]['各里總案件數']);
-            html += "<li>" + totalObj[i]["name"] + "</li>"
-          }
-          $('.area-top10 ul').append(html);
-        }
-        function setVillageTop30() {
-          var allArr = pTaipeiAreaInfo['全部'];
-          bubbleSort(allArr, ['各里總案件數']);
-          // console.log('allArr = ', allArr);
-          var html = '';
-          for (var i = 0; i < 30; i++) {
-            // console.log('allArr[i] = ', allArr[i]['各里總案件數']);
-            html += "<li>" + allArr[i]['properties']['Substitute'] + "</li>"
-          }
-          $('.village-top10 ul').append(html);
-        }
-        function setVillageTop5() {
-          var caseType = '';
-          $('.chartType').change(function() {
-            caseType = $(this).val() || '士林區';
-            // console.log('caseType = ', caseType);
-            setVillageTop5Val();
-          }).change();
-
-          function setVillageTop5Val() {
-            var allArr = pTaipeiAreaInfo[caseType];
-            bubbleSort(allArr, ['各里總案件數']);
-            // console.log('allArr = ', allArr);
-            var html = '';
-            for (var i = 0; i < 5; i++) {
-              // console.log('allArr[i] = ', allArr[i]['各里總案件數']);
-              html += "<li>" + allArr[i]['properties']['Substitute'] + "</li>"
-            }
-            $('.top5 ul li').remove();
-            $('.top5 ul').append(html);
-          }
-        }
+        var newType = '各里總案件數';
+        var totalObj = [
+          {
+            "name": "士林區",
+            "value": 1046
+          },
+          {
+            "name": "文山區",
+            "value": 957
+          },
+          {
+            "name": "內湖區",
+            "value": 896
+          },
+          {
+            "name": "北投區",
+            "value": 785
+          },
+          {
+            "name": "中山區",
+            "value": 782
+          },
+          {
+            "name": "大安區",
+            "value": 782
+          },
+          {
+            "name": "萬華區",
+            "value": 756
+          },
+          {
+            "name": "信義區",
+            "value": 756
+          },
+          {
+            "name": "松山區",
+            "value": 631
+          },
+          {
+            "name": "大同區",
+            "value": 587
+          },
+          {
+            "name": "南港區",
+            "value": 439
+          },
+          {
+            "name": "中正區",
+            "value": 410
+          },
+        ];
       } else if (locationType == 'old') {
-        // console.log('老人保護');
-        setAreaTop10();
-        setVillageTop30();
-        setVillageTop5();
-        // features.thisValue = +features["各里總案件數"];
-        function setAreaTop10() {
-          var totalArr = [];
-          var total = 0;
-          for (var i = 0; i < TaipeiAreaArr.length; i++) {
-            total = 0;
-            for (var j = 0; j < pTaipeiAreaInfo[TaipeiAreaArr[i]].length; j++) {
-              total += pTaipeiAreaInfo[TaipeiAreaArr[i]][j]['老人保護'];
-            }
-            // console.log('pTaipeiAreaInfo[TaipeiAreaArr[i]] = ', pTaipeiAreaInfo[TaipeiAreaArr[i]]);
-            // console.log('pTaipeiAreaInfo[TaipeiAreaArr[i]].length = ', pTaipeiAreaInfo[TaipeiAreaArr[i]].length);
-            // console.log('total = ', total);
-            totalArr[i] = total
+        var newType = '老人保護';
+        var totalObj = [
+          {
+            "name": "文山區",
+            "value": 73
+          },
+          {
+            "name": "士林區",
+            "value": 63
+          },
+          {
+            "name": "信義區",
+            "value": 56
+          },
+          {
+            "name": "大安區",
+            "value": 54
+          },
+          {
+            "name": "內湖區",
+            "value": 50
+          },
+          {
+            "name": "萬華區",
+            "value": 46
+          },
+          {
+            "name": "北投區",
+            "value": 40
+          },
+          {
+            "name": "松山區",
+            "value": 39
+          },
+          {
+            "name": "大同區",
+            "value": 36
+          },
+          {
+            "name": "中正區",
+            "value": 32
+          },
+          {
+            "name": "中山區",
+            "value": 30
+          },
+          {
+            "name": "南港區",
+            "value": 20
           }
-          // console.log('TaipeiAreaArr = ', TaipeiAreaArr);
-          // console.log('totalArr = ', totalArr);
-          // bubbleSort(totalArr);
-          // console.log('totalArr = ', totalArr);
-          var totalObj = [
-            {
-              "name": "文山區",
-              "value": 73
-            },
-            {
-              "name": "士林區",
-              "value": 63
-            },
-            {
-              "name": "信義區",
-              "value": 56
-            },
-            {
-              "name": "大安區",
-              "value": 54
-            },
-            {
-              "name": "內湖區",
-              "value": 50
-            },
-            {
-              "name": "萬華區",
-              "value": 46
-            },
-            {
-              "name": "北投區",
-              "value": 40
-            },
-            {
-              "name": "松山區",
-              "value": 39
-            },
-            {
-              "name": "大同區",
-              "value": 36
-            },
-            {
-              "name": "中正區",
-              "value": 32
-            },
-            {
-              "name": "中山區",
-              "value": 30
-            },
-            {
-              "name": "南港區",
-              "value": 20
-            }
-          ];
-          // console.log('totalObj[0] = ', totalObj[0]);
-          var html = '';
-          for (var i = 0; i < 10; i++) {
-            // console.log('allArr[i] = ', allArr[i]['各里總案件數']);
-            html += "<li>" + totalObj[i]["name"] + "</li>"
-          }
-          $('.area-top10 ul').append(html);
-        }
-        function setVillageTop30() {
-          var allArr = pTaipeiAreaInfo['全部'];
-          bubbleSort(allArr, ['老人保護']);
-          // console.log('allArr = ', allArr);
-          var html = '';
-          for (var i = 0; i < 30; i++) {
-            // console.log('allArr[i] = ', allArr[i]['各里總案件數']);
-            html += "<li>" + allArr[i]['properties']['Substitute'] + "</li>"
-          }
-          $('.village-top10 ul').append(html);
-        }
-        function setVillageTop5() {
-          var caseType = '';
-          $('.chartType').change(function() {
-            caseType = $(this).val() || '士林區';
-            // console.log('caseType = ', caseType);
-            setVillageTop5Val();
-          }).change();
-
-          function setVillageTop5Val() {
-            var allArr = pTaipeiAreaInfo[caseType];
-            bubbleSort(allArr, ['老人保護']);
-            // console.log('allArr = ', allArr);
-            var html = '';
-            for (var i = 0; i < 5; i++) {
-              // console.log('allArr[i] = ', allArr[i]['各里總案件數']);
-              html += "<li>" + allArr[i]['properties']['Substitute'] + "</li>"
-            }
-            $('.top5 ul li').remove();
-            $('.top5 ul').append(html);
-          }
-        }
+        ];
       } else if (locationType == 'children') {
-        // features.thisValue = +features["兒少保護"];
-        setAreaTop10();
-        setVillageTop30();
-        setVillageTop5();
-        // features.thisValue = +features["各里總案件數"];
-        function setAreaTop10() {
-          var totalArr = [];
-          var total = 0;
-          for (var i = 0; i < TaipeiAreaArr.length; i++) {
-            total = 0;
-            for (var j = 0; j < pTaipeiAreaInfo[TaipeiAreaArr[i]].length; j++) {
-              total += pTaipeiAreaInfo[TaipeiAreaArr[i]][j]['兒少保護'];
-            }
-            // console.log('pTaipeiAreaInfo[TaipeiAreaArr[i]] = ', pTaipeiAreaInfo[TaipeiAreaArr[i]]);
-            // console.log('pTaipeiAreaInfo[TaipeiAreaArr[i]].length = ', pTaipeiAreaInfo[TaipeiAreaArr[i]].length);
-            // console.log('total = ', total);
-            totalArr[i] = total
-          }
-          // console.log('TaipeiAreaArr = ', TaipeiAreaArr);
-          // console.log('totalArr = ', totalArr);
-          // bubbleSort(totalArr);
-          // console.log('totalArr = ', totalArr);
-          var totalObj = [
-            {
-              "name": "士林區",
-              "value": 89
-            },
-            {
-              "name": "文山區",
-              "value": 79
-            },
-            {
-              "name": "萬華區",
-              "value": 65
-            },
-            {
-              "name": "中山區",
-              "value": 63
-            },
-            {
-              "name": "大安區",
-              "value": 60
-            },
-            {
-              "name": "信義區",
-              "value": 58
-            },
-            {
-              "name": "北投區",
-              "value": 56
-            },
-            {
-              "name": "內湖區",
-              "value": 53
-            },
-            {
-              "name": "大同區",
-              "value": 42
-            },
-            {
-              "name": "松山區",
-              "value": 39
-            },
-            {
-              "name": "南港區",
-              "value": 36
-            },
-            {
-              "name": "中正區",
-              "value": 23
-            },
-          ];
-          // console.log('totalObj[0] = ', totalObj[0]);
-          var html = '';
-          for (var i = 0; i < 10; i++) {
-            // console.log('allArr[i] = ', allArr[i]['各里總案件數']);
-            html += "<li>" + totalObj[i]["name"] + "</li>"
-          }
-          $('.area-top10 ul').append(html);
-        }
-        function setVillageTop30() {
-          var allArr = pTaipeiAreaInfo['全部'];
-          bubbleSort(allArr, ['兒少保護']);
-          // console.log('allArr = ', allArr);
-          var html = '';
-          for (var i = 0; i < 30; i++) {
-            // console.log('allArr[i] = ', allArr[i]['各里總案件數']);
-            html += "<li>" + allArr[i]['properties']['Substitute'] + "</li>"
-          }
-          $('.village-top10 ul').append(html);
-        }
-        function setVillageTop5() {
-          var caseType = '';
-          $('.chartType').change(function() {
-            caseType = $(this).val() || '士林區';
-            // console.log('caseType = ', caseType);
-            setVillageTop5Val();
-          }).change();
-
-          function setVillageTop5Val() {
-            var allArr = pTaipeiAreaInfo[caseType];
-            bubbleSort(allArr, ['兒少保護']);
-            // console.log('allArr = ', allArr);
-            var html = '';
-            for (var i = 0; i < 5; i++) {
-              // console.log('allArr[i] = ', allArr[i]['各里總案件數']);
-              html += "<li>" + allArr[i]['properties']['Substitute'] + "</li>"
-            }
-            $('.top5 ul li').remove();
-            $('.top5 ul').append(html);
-          }
-        }
+        var newType = '兒少保護';
+        var totalObj = [
+          {
+            "name": "士林區",
+            "value": 89
+          },
+          {
+            "name": "文山區",
+            "value": 79
+          },
+          {
+            "name": "萬華區",
+            "value": 65
+          },
+          {
+            "name": "中山區",
+            "value": 63
+          },
+          {
+            "name": "大安區",
+            "value": 60
+          },
+          {
+            "name": "信義區",
+            "value": 58
+          },
+          {
+            "name": "北投區",
+            "value": 56
+          },
+          {
+            "name": "內湖區",
+            "value": 53
+          },
+          {
+            "name": "大同區",
+            "value": 42
+          },
+          {
+            "name": "松山區",
+            "value": 39
+          },
+          {
+            "name": "南港區",
+            "value": 36
+          },
+          {
+            "name": "中正區",
+            "value": 23
+          },
+        ];
       } else if (locationType == 'intimate') {
-        // features.thisValue = +features["親密關係"];
-        setAreaTop10();
-        setVillageTop30();
-        setVillageTop5();
-        // features.thisValue = +features["各里總案件數"];
-        function setAreaTop10() {
-          var totalArr = [];
-          var total = 0;
-          for (var i = 0; i < TaipeiAreaArr.length; i++) {
-            total = 0;
-            for (var j = 0; j < pTaipeiAreaInfo[TaipeiAreaArr[i]].length; j++) {
-              total += pTaipeiAreaInfo[TaipeiAreaArr[i]][j]['親密關係'];
-            }
-            // console.log('pTaipeiAreaInfo[TaipeiAreaArr[i]] = ', pTaipeiAreaInfo[TaipeiAreaArr[i]]);
-            // console.log('pTaipeiAreaInfo[TaipeiAreaArr[i]].length = ', pTaipeiAreaInfo[TaipeiAreaArr[i]].length);
-            // console.log('total = ', total);
-            totalArr[i] = total
+        var newType = '親密關係';
+        var totalObj = [
+          {
+            "name": "士林區",
+            "value": 527
+          },
+          {
+            "name": "內湖區",
+            "value": 514
+          },
+          {
+            "name": "文山區",
+            "value": 456
+          },
+          {
+            "name": "大安區",
+            "value": 445
+          },
+          {
+            "name": "中山區",
+            "value": 434
+          },
+          {
+            "name": "萬華區",
+            "value": 414
+          },
+          {
+            "name": "北投區",
+            "value": 381
+          },
+          {
+            "name": "信義區",
+            "value": 368
+          },
+          {
+            "name": "松山區",
+            "value": 342
+          },
+          {
+            "name": "大同區",
+            "value": 275
+          },
+          {
+            "name": "南港區",
+            "value": 236
+          },
+          {
+            "name": "中正區",
+            "value": 220
+          },
+        ];
+      }
+      setAreaTop10(newType, totalObj);
+      setVillageTop30(newType);
+      setVillageTop5(newType);
+
+      function setAreaTop10(newType, totalObj) {
+        var totalArr = [];
+        var total = 0;
+        for (var i = 0; i < TaipeiAreaArr.length; i++) {
+          total = 0;
+          for (var j = 0; j < pTaipeiAreaInfo[TaipeiAreaArr[i]].length; j++) {
+            total += pTaipeiAreaInfo[TaipeiAreaArr[i]][j][newType];
           }
-          // console.log('TaipeiAreaArr = ', TaipeiAreaArr);
-          // console.log('totalArr = ', totalArr);
-          // bubbleSort(totalArr);
-          // console.log('totalArr = ', totalArr);
-          var totalObj = [
-            {
-              "name": "士林區",
-              "value": 527
-            },
-            {
-              "name": "內湖區",
-              "value": 514
-            },
-            {
-              "name": "文山區",
-              "value": 456
-            },
-            {
-              "name": "大安區",
-              "value": 445
-            },
-            {
-              "name": "中山區",
-              "value": 434
-            },
-            {
-              "name": "萬華區",
-              "value": 414
-            },
-            {
-              "name": "北投區",
-              "value": 381
-            },
-            {
-              "name": "信義區",
-              "value": 368
-            },
-            {
-              "name": "松山區",
-              "value": 342
-            },
-            {
-              "name": "大同區",
-              "value": 275
-            },
-            {
-              "name": "南港區",
-              "value": 236
-            },
-            {
-              "name": "中正區",
-              "value": 220
-            },
-          ];
-          // console.log('totalObj[0] = ', totalObj[0]);
-          var html = '';
-          for (var i = 0; i < 10; i++) {
-            // console.log('allArr[i] = ', allArr[i]['各里總案件數']);
-            html += "<li>" + totalObj[i]["name"] + "</li>"
-          }
-          $('.area-top10 ul').append(html);
+          totalArr[i] = total;
         }
-        function setVillageTop30() {
-          var allArr = pTaipeiAreaInfo['全部'];
-          bubbleSort(allArr, ['親密關係']);
-          // console.log('allArr = ', allArr);
+        var html = '';
+        for (var i = 0; i < 10; i++) {
+          html += "<li>" + totalObj[i]["name"] + "</li>"
+        }
+        $('.area-top10 ul').append(html);
+      }
+      function setVillageTop30() {
+        var allArr = pTaipeiAreaInfo['全部'];
+        bubbleSort(allArr, [newType]);
+        var html = '';
+        for (var i = 0; i < 30; i++) {
+          html += "<li>" + allArr[i]['properties']['Substitute'] + "</li>"
+        }
+        $('.village-top10 ul').append(html);
+      }
+      function setVillageTop5() {
+        var caseType = '';
+        $('.chartType').change(function() {
+          caseType = $(this).val() || '士林區';
+          setVillageTop5Val();
+        }).change();
+
+        function setVillageTop5Val() {
+          var allArr = pTaipeiAreaInfo[caseType];
+          bubbleSort(allArr, [newType]);
           var html = '';
-          for (var i = 0; i < 30; i++) {
-            // console.log('allArr[i] = ', allArr[i]['各里總案件數']);
+          for (var i = 0; i < 5; i++) {
             html += "<li>" + allArr[i]['properties']['Substitute'] + "</li>"
           }
-          $('.village-top10 ul').append(html);
-        }
-        function setVillageTop5() {
-          var caseType = '';
-          $('.chartType').change(function() {
-            caseType = $(this).val() || '士林區';
-            // console.log('caseType = ', caseType);
-            setVillageTop5Val();
-          }).change();
-
-          function setVillageTop5Val() {
-            var allArr = pTaipeiAreaInfo[caseType];
-            bubbleSort(allArr, ['親密關係']);
-            // console.log('allArr = ', allArr);
-            var html = '';
-            for (var i = 0; i < 5; i++) {
-              // console.log('allArr[i] = ', allArr[i]['各里總案件數']);
-              html += "<li>" + allArr[i]['properties']['Substitute'] + "</li>"
-            }
-            $('.top5 ul li').remove();
-            $('.top5 ul').append(html);
-          }
+          $('.top5 ul li').remove();
+          $('.top5 ul').append(html);
         }
       }
-      // allArr.reverse();
-      // console.log('allArr_new = ', allArr);
-      // for (var i = 0; i < allArr.length; i++) {
-      //   // console.log(allArr[i]['各里總案件數']);
-      // }
-
     }
-
-    /*setCaseType*/
-    // function setCaseType() {
-    //   var param = location.href.split("?")[1];
-    //   if (param) {
-    //     var type = param.split("=")[1];
-    //   }
-    //   // console.log('param = ', param);
-    //   // console.log('type = ', type);
-    //   if (type == 'all') {
-    //     $('.type-name').text('全部');
-    //     $('.type-num').text(8928);
-    //     features.thisValue = +features["各里總案件數"];
-    //   } else if (type == 'old') {
-    //     $('.type-name').text('老人保護');
-    //     $('.type-num').text(541);
-    //     features.thisValue = +features["老人保護"];
-    //   } else if (type == 'children') {
-    //     $('.type-name').text('兒少保護');
-    //     $('.type-num').text(681);
-    //     features.thisValue = +features["兒少保護"];
-    //   } else if (type == 'intimate') {
-    //     $('.type-name').text('親密關係');
-    //     $('.type-num').text(4662);
-    //     features.thisValue = +features["親密關係"];
-    //   } else if (type == 'other') {
-    //     $('.type-name').text('其他家虐');
-    //     $('.type-num').text(2729);
-    //     features.thisValue = +features["其他家虐"];
-    //   }
-    // }
   });
 })(jQuery)

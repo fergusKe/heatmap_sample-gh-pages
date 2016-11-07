@@ -1,51 +1,48 @@
 (function($) {
   $(function() {
-    /*loading效果，故意將時間設久一點，當資料讀取完再讓它fadeOut*/
+    /*啟動loading效果*/
     $(".fakeloader").fakeLoader({
-        timeToHide:1200000,
         bgColor:"#0296a9",
         zIndex: '1001',
         spinner:"spinner3"
     });
 
-    var w = 500;
-    var h = 700;
     var TaipeiAreaNameArr = ["士林區", "文山區", "內湖區", "北投區", "中山區", "大安區", "信義區", "萬華區", "松山區", "大同區", "南港區", "中正區"];
     var TaipeiAreaObj = {};
     TaipeiAreaObj['全部'] = [];
     var TaipeiVillageArr = [];
 		var villageTopojson, features;
-		var caseType = "各里總案件數";
+		var caseType = "各里總案件數";  // 要在地圖上顯示的案件類型
 
     /*取得台灣地圖資訊及風險指標*/
     d3.json("data/county.json", function(topodata) {
-      d3.csv("data/mapInfo.csv", function(mapInfo) {
+      d3.csv("data/case_village.csv", function(caseVillage) {
         var result = {};
         var village;
         var temp = [];
-        for (var i = 0 ; i < mapInfo.length; i++) {
-          village = mapInfo[i]["里"];
+        for (var i = 0 ; i < caseVillage.length; i++) {
+          village = caseVillage[i]["里"];
           if (village) {
             village = village.replace("台","臺");
             result[village] = result[village] || {};
-            result[village]["兄弟姊妹間暴力"] = +mapInfo[i]["兄弟姊妹間暴力"].replace("%", "") || 0;
-            result[village]["老人保護"] = +mapInfo[i]["老人保護"].replace("%", "") || 0;
-            result[village]["兒少保護"] = +mapInfo[i]["兒少保護"].replace("%", "") || 0;
-            result[village]["親密關係"] = +mapInfo[i]["親密關係"].replace("%", "") || 0;
-            result[village]["其他家虐"] = +mapInfo[i]["其他家虐"].replace("%", "") || 0;
-            result[village]["低收"] = +mapInfo[i]["低收"].replace("%", "") || 0;
-            result[village]["障礙"] = +mapInfo[i]["障礙"].replace("%", "") || 0;
-            result[village]["各里總案件數"] = +mapInfo[i]["各里總案件數"].replace("%", "") || 0;
+            result[village]["兄弟姊妹間暴力"] = +caseVillage[i]["兄弟姊妹間暴力"].replace("%", "") || 0;
+            result[village]["老人保護"] = +caseVillage[i]["老人保護"].replace("%", "") || 0;
+            result[village]["兒少保護"] = +caseVillage[i]["兒少保護"].replace("%", "") || 0;
+            result[village]["親密關係"] = +caseVillage[i]["親密關係"].replace("%", "") || 0;
+            result[village]["其他家虐"] = +caseVillage[i]["其他家虐"].replace("%", "") || 0;
+            result[village]["低收"] = +caseVillage[i]["低收"].replace("%", "") || 0;
+            result[village]["障礙"] = +caseVillage[i]["障礙"].replace("%", "") || 0;
+            result[village]["各里總案件數"] = +caseVillage[i]["各里總案件數"].replace("%", "") || 0;
           }
         }
 
         villageTopojson = topojson.feature(topodata, topodata.objects["Village_NLSC_121_1050715"]);
         features = villageTopojson.features;
 
-        console.log('result = ', result);
-        console.log('villageTopojson = ', villageTopojson);
-        // console.log('features = ', features);
+        // console.log('result = ', result);
+        // console.log('villageTopojson = ', villageTopojson);
 
+        /*將風險指標加到地圖資訊上*/
         features = features.map(function(f) {
           if ( f.properties.C_Name === "臺北市" && checkAvailability(TaipeiAreaNameArr, f.properties.T_Name) ) {
             if(result[f.properties.C_Name + f.properties.T_Name + f.properties.V_Name]) {
@@ -71,7 +68,7 @@
             /*所有里的陣列*/
             TaipeiVillageArr.push(f);
 
-            /*將里的陣列用區的做分類*/
+            /*將里的陣列用區做分類*/
             if (!TaipeiAreaObj[f.properties.T_Name]){
               TaipeiAreaObj[f.properties.T_Name]=[];
             }
@@ -81,8 +78,8 @@
           }
         });
         // console.log('features = ', features);
-        console.log('TaipeiAreaObj = ', TaipeiAreaObj);
-        console.log('TaipeiVillageArr = ', TaipeiVillageArr);
+        // console.log('TaipeiAreaObj = ', TaipeiAreaObj);
+        // console.log('TaipeiVillageArr = ', TaipeiVillageArr);
         // console.log('TaipeiAreaObj[北投區].length = ', TaipeiAreaObj['北投區'].length);
         // for (var i = 0; i < TaipeiAreaObj['北投區'].length; i++) {
         //   console.log('bato = ', TaipeiAreaObj['北投區'][i].properties.Substitute);
@@ -95,196 +92,37 @@
 
         // var taipeiStatesData = topojson.feature(topodata, topodata.objects["Village_NLSC_121_1050715"]);
 
-				setLeaflet();
+				setMap();
         setNav();
+
+        /*關閉loading效果*/
         $(".fakeloader").fadeOut();
       });
     });
 
-		function setLeaflet() {
-			var map = L.map('map').setView([25.08112, 121.5602], 11);
+    /*案件類型直條圖*/
+    d3.csv("data/case_type_statistics.csv", stringToNum, function(pData) {
+      for (var i = 0; i < pData.length; i++) {
+        if (pData[i]['案件類型'] === '老人保護') {
+          pData['老人保護'] = pData[i]['總案件量'];
+        } else if (pData[i]['案件類型'] === '兒少保護') {
+          pData['兒少保護'] = pData[i]['總案件量'];
+        } else if (pData[i]['案件類型'] === '親密關係') {
+          pData['親密關係'] = pData[i]['總案件量'];
+        } else if (pData[i]['案件類型'] === '兄弟姊妹間暴力') {
+         pData['其他家虐'] = pData[i]['總案件量'];
+       }
+      }
+      var data = [
+        {type: '老人保護', value: +pData['老人保護']},
+        {type: '兒少保護', value: +pData['兒少保護']},
+        {type: '親密關係', value: +pData['親密關係']},
+        {type: '其他家虐', value: +pData['其他家虐']}
+      ];
 
-			L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpandmbXliNDBjZWd2M2x6bDk3c2ZtOTkifQ._QA7i5Mpkd_m30IGElHziw', {
-				maxZoom: 18,
-				attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, ' +
-					'<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
-					'Imagery © <a href="http://mapbox.com">Mapbox</a>',
-				id: 'mapbox.light'
-			}).addTo(map);
-
-			// L.marker([25.138230, 121.535883]).addTo(map)
-			// .bindPopup("<b>Hello world!</b><br />I am a popup.").openPopup();
-
-			// control that shows state info on hover
-			var info = L.control();
-
-			info.onAdd = function (map) {
-			 this._div = L.DomUtil.create('div', 'info');
-			 this.update();
-			 return this._div;
-			};
-
-			info.update = function (props) {
-				// console.log('props = ', props);
-			 this._div.innerHTML = '<h4>台北市熱區地圖</h4>' +  (props ?
-				 '<b>台北市 ' + props.properties.V_Name + '</b><br />' + '案件數：' + props[caseType]
-				 : '請將滑鼠移至村里位置');
-			};
-
-			info.addTo(map);
-
-			// get color depending on population density value
-			function getColor(d) {
-				return d > 26 ? '#5A0000' :
-							 d > 21  ? '#9C0000' :
-							 d > 16  ? '#DE1021' :
-							 d > 11  ? '#FF4D52' :
-													'#FF7D84';
-			}
-			// typeOfCases = "全部";
-			function style(features, typeOfCases) {
-				// console.log('style = ', features);
-				// console.log('typeOfCases = ', typeOfCases);
-				if (typeOfCases == undefined) {
-					features.thisValue = +features["各里總案件數"];
-				} else {
-					features.thisValue = +features[typeOfCases];
-				}
-
-				// console.log('typeOfCases = ', typeOfCases);
-
-				return {
-					weight: 2,
-					opacity: 1,
-					color: 'white',
-					dashArray: '3',
-					fillOpacity: 0.7,
-					fillColor: getColor(features.thisValue)
-				};
-			}
-
-			function highlightFeature(e) {
-			 var layer = e.target;
-
-			 layer.setStyle({
-				 weight: 5,
-				 color: '#666',
-				 dashArray: '',
-				 fillOpacity: 0.7
-			 });
-
-			 if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
-				 layer.bringToFront();
-			 }
-			 // console.log('layer.feature = ', layer.feature);
-			 // layer.feature.thisValue = +layer.feature["兒少保護"];
-			 info.update(layer.feature);
-			}
-
-			var geojson;
-
-			function resetHighlight(e) {
-			 geojson.resetStyle(e.target);
-			 info.update();
-			}
-
-			function zoomToFeature(e) {
-			 map.fitBounds(e.target.getBounds());
-			}
-
-			function onEachFeature(feature, layer) {
-				layer.on({
-					mouseover: highlightFeature,
-					mouseout: resetHighlight,
-					click: zoomToFeature
-				});
-			}
-      console.log('villageTopojson = ', villageTopojson);
-			geojson = L.geoJson(villageTopojson, {
-				style: style,
-				onEachFeature: onEachFeature
-			}).addTo(map);
-
-			// geojson = L.geoJson(villageTopojson, {
-			//   style: function (feature) {
-			//     console.log('feature = ', feature);
-			//       return {
-			//         weight: 2,
-			//         opacity: 1,
-			//         color: 'white',
-			//         dashArray: '3',
-			//         fillOpacity: 0.7,
-			//         fillColor: getColor(feature["各里總案件數"])
-			//       };
-			//   },
-			//   onEachFeature: onEachFeature
-			// }).addTo(map);
-
-			/*切換行政區*/
-			// $('.nav-title2-list li').click(function() {
-			//   caseType = $(this).attr("name");
-			//   console.log('caseType = ', caseType);
-			//   $('.leaflet-zoom-animated g path').remove();
-			//   geojson = L.geoJson(villageTopojson, {
-			//     style: function (feature) {
-			//       // console.log('feature = ', feature);
-			//         return {
-			//           weight: 2,
-			//           opacity: 1,
-			//           color: 'white',
-			//           dashArray: '3',
-			//           fillOpacity: 0.7,
-			//           fillColor: getColor(feature[caseType])
-			//         };
-			//     },
-			//     onEachFeature: onEachFeature
-			//   }).addTo(map);
-
-			//   // geojson.setStyle({fillColor: getColor(30)});
-			// });
-
-			map.attributionControl.addAttribution('Population data &copy; <a href="http://census.gov/">US Census Bureau</a>');
-
-			var legend = L.control({position: 'bottomright'});
-
-			legend.onAdd = function (map) {
-
-			 var div = L.DomUtil.create('div', 'info legend'),
-				 grades = [0, 20, 40, 60, 80, 100],
-				 grades_data = [1, 11, 16, 21, 26, 65],
-				 labels = [],
-				 from, to;
-
-			 for (var i = 0; i < grades.length - 1; i++) {
-				 from = grades[i];
-				 from_data = grades_data[i]
-				 to = grades[i + 1];
-
-				 labels.push(
-					 '<i style="background:' + getColor(from_data + 1) + '"></i> ' +
-					 from + (to ? '&ndash;' + to : '+'));
-			 }
-
-			 div.innerHTML = labels.join('<br>');
-			 return div;
-			};
-
-			legend.addTo(map);
-		}
-
-    function checkAvailability(arr, val) {
-      return arr.some(function(arrVal) {
-        return val === arrVal;
-      });
-    }
-
-    // console.log('statistics');
-    // Statistics Chart
-    d3.csv("data/statistics.csv", stringToNum, function(data) {
-      // type2
       var width = 300,
         height = 200,
-        margin = {left: 110, top: 30, right: 30, bottom: 30},
+        margin = {left: 110, top: 30, right: 55, bottom: 30},
         svg_width = width + margin.left + margin.right,
         svg_height = height + margin.top + margin.bottom;
 
@@ -304,8 +142,6 @@
       var chart = svg.append("g")
         .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
 
-      // var x_axis = d3.svg.axis().scale(scale_x);
-      //   y_axis = d3.svg.axis().scale(scale).orient("left").ticks(5);
       var x_axis = d3.svg.axis().scale(scale).ticks(5);
         y_axis = d3.svg.axis().scale(scale_y).orient("left");
 
@@ -321,13 +157,11 @@
         .append("g")
         .attr("class", "bar")
         .attr("transform", function(d, i) {
-          // console.log('scale_x(d.type) = ', scale_x(d.type));
           return "translate(0, " + scale_y(d.type) + ")";
         });
 
       bar.append("rect")
         .attr({
-          // "y": function(d) {return scale(d.value)},
           "width": function(d) {return scale(d.value)},
           "height": scale_y.rangeBand()
         })
@@ -338,9 +172,9 @@
         .attr({
           "x": function(d) {return scale(d.value)},
           "y": scale_y.rangeBand()/2,
-          "dx": -5,
+          "dx": 5,
           "dy": 6,
-          "text-anchor": "end"
+          "text-anchor": "start"
         })
     });
     function stringToNum(d) {
@@ -350,7 +184,6 @@
 
 
     /*nav*/
-    /*show nav-list*/
     function setNav() {
       var navTitle = $('.nav-title');
       var navListBox = $('.nav-list-box');
@@ -549,6 +382,130 @@
         _navListShow_TL[3] = false;
       });
       $('.nav-title3-list li').eq(0).click();
+    }
+
+    /*heat-map*/
+    function setMap() {
+			var map = L.map('map').setView([25.08112, 121.5602], 11);
+
+			L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpandmbXliNDBjZWd2M2x6bDk3c2ZtOTkifQ._QA7i5Mpkd_m30IGElHziw', {
+				maxZoom: 18,
+				attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, ' +
+					'<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
+					'Imagery © <a href="http://mapbox.com">Mapbox</a>',
+				id: 'mapbox.light'
+			}).addTo(map);
+
+			// control that shows state info on hover
+			var info = L.control();
+
+			info.onAdd = function (map) {
+			 this._div = L.DomUtil.create('div', 'info');
+			 this.update();
+			 return this._div;
+			};
+
+			info.update = function (props) {
+			 this._div.innerHTML = '<h4>台北市熱區地圖</h4>' +  (props ?
+				 '<b>台北市 ' + props.properties.V_Name + '</b><br />' + '案件數：' + props[caseType]
+				 : '請將滑鼠移至村里位置');
+			};
+
+			info.addTo(map);
+
+			// get color depending on population density value
+			function getColor(d) {
+				return d > 26 ? '#5A0000' :
+							 d > 21  ? '#9C0000' :
+							 d > 16  ? '#DE1021' :
+							 d > 11  ? '#FF4D52' :
+													'#FF7D84';
+			}
+
+			function style(features) {
+				return {
+					weight: 2,
+					opacity: 1,
+					color: 'white',
+					dashArray: '3',
+					fillOpacity: 0.7,
+					fillColor: getColor(features[caseType])
+				};
+			}
+
+			function highlightFeature(e) {
+			 var layer = e.target;
+
+			 layer.setStyle({
+				 weight: 5,
+				 color: '#666',
+				 dashArray: '',
+				 fillOpacity: 0.7
+			 });
+
+			 if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
+				 layer.bringToFront();
+			 }
+			 info.update(layer.feature);
+			}
+
+			var geojson;
+
+			function resetHighlight(e) {
+			 geojson.resetStyle(e.target);
+			 info.update();
+			}
+
+			function zoomToFeature(e) {
+			 map.fitBounds(e.target.getBounds());
+			}
+
+			function onEachFeature(feature, layer) {
+				layer.on({
+					mouseover: highlightFeature,
+					mouseout: resetHighlight,
+					click: zoomToFeature
+				});
+			}
+
+			geojson = L.geoJson(villageTopojson, {
+				style: style,
+				onEachFeature: onEachFeature
+			}).addTo(map);
+
+			map.attributionControl.addAttribution('Population data &copy; <a href="http://census.gov/">US Census Bureau</a>');
+
+			var legend = L.control({position: 'bottomright'});
+
+			legend.onAdd = function (map) {
+
+			 var div = L.DomUtil.create('div', 'info legend'),
+				 grades = [0, 20, 40, 60, 80, 100],
+				 grades_data = [1, 11, 16, 21, 26, 65],
+				 labels = [],
+				 from, to;
+
+			 for (var i = 0; i < grades.length - 1; i++) {
+				 from = grades[i];
+				 from_data = grades_data[i]
+				 to = grades[i + 1];
+
+				 labels.push(
+					 '<i style="background:' + getColor(from_data + 1) + '"></i> ' +
+					 from + (to ? '&ndash;' + to : '+'));
+			 }
+
+			 div.innerHTML = labels.join('<br>');
+			 return div;
+			};
+
+			legend.addTo(map);
+		}
+
+    function checkAvailability(arr, val) {
+      return arr.some(function(arrVal) {
+        return val === arrVal;
+      });
     }
   });
 })(jQuery)
