@@ -5,11 +5,14 @@
   var TaipeiVillageArr = [];
   var villageTopojson, features;
   var caseType = "各里總案件數";  // 要在地圖上顯示的案件類型
+
   /*取得網址上的參數*/
   var locationParam = location.href.split("?")[1];
   if (locationParam) {
     var locationType = locationParam.split("=")[1];
   }
+
+  /*氣泡排序法*/
   var swap = function(data, i, j){
     var tmp = data[i];
     data[i] = data[j];
@@ -58,9 +61,9 @@
           $('.type-num').text(4662);
           $('.nav-title2-list-box li').eq(3).addClass('active');
         } else if (locationType == 'other') {
-          caseType = "其他家虐";
-          $('.type-name').text(caseType);
-          $('.type-num').text(2729);
+          caseType = "兄弟姊妹間暴力";
+          $('.type-name').text('其他家虐');
+          $('.type-num').text(315);
           $('.nav-title2-list-box li').eq(4).addClass('active');
         }
       }
@@ -80,6 +83,11 @@
               result[village]["老人保護"] = +caseVillage[i]["老人保護"].replace("%", "") || 0;
               result[village]["兒少保護"] = +caseVillage[i]["兒少保護"].replace("%", "") || 0;
               result[village]["親密關係"] = +caseVillage[i]["親密關係"].replace("%", "") || 0;
+              result[village]["女"] = +caseVillage[i]["女"].replace("%", "") || 0;
+              result[village]["男"] = +caseVillage[i]["男"].replace("%", "") || 0;
+              result[village]["小於18歲"] = +caseVillage[i]["小於18歲"].replace("%", "") || 0;
+              result[village]["18到65歲"] = +caseVillage[i]["18到65歲"].replace("%", "") || 0;
+              result[village]["大於65歲"] = +caseVillage[i]["大於65歲"].replace("%", "") || 0;
               result[village]["各里總案件數"] = +caseVillage[i]["各里總案件數"].replace("%", "") || 0;
               result[village]["兄弟姊妹間暴力Rank"] = +caseVillage[i]["兄弟姊妹間暴力Rank"].replace("%", "") || 0;
               result[village]["老人保護Rank"] = +caseVillage[i]["老人保護Rank"].replace("%", "") || 0;
@@ -101,6 +109,11 @@
                 f["老人保護"] = +result[f.properties.C_Name + f.properties.T_Name + f.properties.V_Name]["老人保護"] || 0;
                 f["兒少保護"] = +result[f.properties.C_Name + f.properties.T_Name + f.properties.V_Name]["兒少保護"] || 0;
                 f["親密關係"] = +result[f.properties.C_Name + f.properties.T_Name + f.properties.V_Name]["親密關係"] || 0;
+                f["女"] = +result[f.properties.C_Name + f.properties.T_Name + f.properties.V_Name]["女"] || 0;
+                f["男"] = +result[f.properties.C_Name + f.properties.T_Name + f.properties.V_Name]["男"] || 0;
+                f["小於18歲"] = +result[f.properties.C_Name + f.properties.T_Name + f.properties.V_Name]["小於18歲"] || 0;
+                f["18到65歲"] = +result[f.properties.C_Name + f.properties.T_Name + f.properties.V_Name]["18到65歲"] || 0;
+                f["大於65歲"] = +result[f.properties.C_Name + f.properties.T_Name + f.properties.V_Name]["大於65歲"] || 0;
                 f["各里總案件數"] = +result[f.properties.C_Name + f.properties.T_Name + f.properties.V_Name]["各里總案件數"] || 0;
                 f["兄弟姊妹間暴力Rank"] = +result[f.properties.C_Name + f.properties.T_Name + f.properties.V_Name]["兄弟姊妹間暴力Rank"] || 0;
                 f["老人保護Rank"] = +result[f.properties.C_Name + f.properties.T_Name + f.properties.V_Name]["老人保護Rank"] || 0;
@@ -113,6 +126,11 @@
                 f["老人保護"] = 0;
                 f["兒少保護"] = 0;
                 f["親密關係"] = 0;
+                f["女"] = 0;
+                f["男"] = 0;
+                f["小於18歲"] = 0;
+                f["18到65歲"] = 0;
+                f["大於65歲"] = 0;
                 f["各里總案件數"] = 0;
                 f["兄弟姊妹間暴力Rank"] = 0;
                 f["老人保護Rank"] = 0;
@@ -306,7 +324,7 @@
           $(this).addClass('active').siblings('li').removeClass('active');
         });
 
-        // nav-data
+        // 點擊選單
         $('.nav-title3-list li').click(function() {
           if ($(this).hasClass('active')) return;
           var area = $(this).text();
@@ -320,6 +338,12 @@
           _navListShow_TL[3] = false;
         });
         $('.nav-title3-list li').eq(0).click();
+
+        $('.nav-title4-list li').click(function(e) {
+          var villageName;
+          villageName = $(this).text();
+          store.set('villageName', villageName);
+        });
       }
 
       /*heat-map*/
@@ -395,7 +419,9 @@
   			}
 
   			function zoomToFeature(e) {
+         var layer = e.target;
   			 map.fitBounds(e.target.getBounds());
+         console.log('layer = ', layer.feature.properties.Substitute);
   			}
 
   			function onEachFeature(feature, layer) {

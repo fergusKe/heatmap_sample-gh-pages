@@ -1,5 +1,11 @@
 (function($) {
   $(function() {
+    /*啟動loading效果*/
+    $(".fakeloader").fakeLoader({
+        bgColor:"#0296a9",
+        zIndex: '1001',
+        spinner:"spinner3"
+    });
     var TaipeiAreaArr = ["士林區", "文山區", "內湖區", "北投區", "中山區", "大安區", "信義區", "萬華區", "松山區", "大同區", "南港區", "中正區"];
     var TaipeiAreaObj = {};
     TaipeiAreaObj['全部'] = [];
@@ -180,6 +186,10 @@
 
         setNav();
         rankList(TaipeiAreaObj);
+        /*關閉loading效果*/
+        $(".fakeloader").fadeOut(500, function() {
+
+        });
 
       });
     });
@@ -508,16 +518,18 @@
     }
 
     d3.csv("data/district_rank_area.csv", function(data) {
-      var oldArr = [];
-      var newArr = [];
-      for (var i = 0; i < data.length; i++) {
-        oldArr[i] = data[i]['avg_predict'];
-      }
+      // var oldArr = [];
+      // var newArr = [];
+      // for (var i = 0; i < data.length; i++) {
+      //   oldArr[i] = data[i]['avg_predict'];
+      // }
+      // console.log('oldArr = ', oldArr);
 
       bubbleSort(data, 'avg_predict');
-      for (var i = 0; i < data.length; i++) {
-        newArr[i] = data[i]['avg_predict'];
-      }
+      // for (var i = 0; i < data.length; i++) {
+      //   newArr[i] = data[i]['avg_predict'];
+      // }
+      // console.log('newArr = ', newArr);
 
       var html = '';
       for (var j = 0; j < 10; j++) {
@@ -529,14 +541,18 @@
     d3.csv("data/district_rank_village.csv", function(data) {
       var oldArr = [];
       var newArr = [];
-      for (var i = 0; i < data.length; i++) {
-        oldArr[i] = data[i]['avg_predict'];
-      }
+      // for (var i = 0; i < data.length; i++) {
+      //   oldArr[i] = data[i]['avg_predict'];
+      // }
+      // console.log('oldArr = ', oldArr);
 
       bubbleSort(data, 'avg_predict');
-      for (var i = 0; i < data.length; i++) {
-        newArr[i] = data[i]['avg_predict'];
-      }
+
+      // for (var i = 0; i < data.length; i++) {
+      //   newArr[i] = data[i]['avg_predict'];
+      // }
+      // console.log('newArr = ', newArr);
+
       var html = '';
       for (var j = 0; j < 10; j++) {
         html += "<li>" + data[j]['town'] + "</li>"

@@ -10,17 +10,19 @@
   <link rel="stylesheet" href="./css/risk.css">
   <title>家防案件預警及風險管理系統</title>
   <script src="./js/lib/jquery-1.9.1.min.js"></script>
+  <script src="./js/lib/store.js"></script>
   <script src="./js/lib/greensock/TweenMax.min.js"></script>
   <script src="./js/lib/fakeLoader.js"></script>
   <script src="./js/lib/leaflet.js"></script>
   <script src="./js/lib/d3.v3.min.js"></script>
   <script src="./js/lib/topojson.v1.min.js"></script>
 
-  <script src="js/common.js"></script>
+  <!-- <script src="js/common.js"></script> -->
   <script src="js/risk.js"></script>
 </head>
 <body>
   <div class="wrap">
+    <div class="fakeloader"></div>
     <div class="header">
       <h1 class="h-title">
         <a href="index.html">台北市家庭暴力防治 受害者熱區地圖</a>
@@ -56,6 +58,7 @@
             <li name="老人保護"><a href="type.html?type=old">老人保護</a></li>
             <li name="兒少保護"><a href="type.html?type=children">兒少保護</a></li>
             <li name="親密關係"><a href="type.html?type=intimate">親密關係</a></li>
+            <li name="其他家虐"><a href="type.html?type=other">其他家虐</a></li>
           </ul>
         </div>
         <div class="nav-title3-list-box nav-list-box area">

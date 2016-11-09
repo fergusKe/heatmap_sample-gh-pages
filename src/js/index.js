@@ -7,7 +7,6 @@
 
   /*案件類型直條圖*/
   function setChart(pData) {
-    console.log('pData = ', pData);
     // d3.csv("data/case_type.csv", stringToNum, function(pData) {
       for (var i = 0; i < pData.length; i++) {
         if (pData[i]['案件類型'] === '老人保護') {
@@ -70,22 +69,22 @@
 
       bar.append("rect")
         .attr({
-          "width": 0,
+          "width": function(d) {return scale(d.value)},
           "height": scale_y.rangeBand()
         })
         .style("fill", "#00bcd4");
 
       bar.append("text")
-        .text(function(d) {return 0})
+        .text(function(d) {return d.value})
         .attr({
-          "x": 0,
+          "x": function(d) {return scale(d.value)},
           "y": scale_y.rangeBand()/2,
           "dx": 5,
           "dy": 6,
           "text-anchor": "start"
         });
 
-      chartAnimate();
+      // chartAnimate();
 
       function chartAnimate() {
         bar.select("rect")
@@ -99,9 +98,7 @@
           .transition()
           .duration(2500)
           .attr({
-            'x': function(d) {
-              return scale(d.value)
-            }
+            'x': function(d) {return scale(d.value)}
           })
           .tween('number', function(d) {
             var i = d3.interpolateRound(0, d.value);

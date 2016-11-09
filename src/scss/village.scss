@@ -9,117 +9,88 @@ $nav-title4: #ffb300;
   text-align: center;
   font-size: 18px;
   color: $nav-title4;
-  .type-name {
+  .village-name {
     margin: 0 -4px;
   }
-  .type-num {
+  .village-num {
     font-size: 42px;
-    // color: #F00;
     font-weight: 700;
     margin: 0 5px;
   }
 }
-.statistic-area {
-  margin-top: 20px;
-  h3 {
-    font-size: 18px;
-    text-align: center;
+
+.chart-box {
+  display: inline-block;
+  p {
+    font-size: 10px;
   }
 }
+.rank-box {
+  display: inline-block;
+  vertical-align: top;
+  margin-left: 30px;
+  .rank {
+    position: absolute;
+    padding-left: 5px;
+  }
+  .mark-icon {
+    position: absolute;
+    top: -16px;
+    left: 0;
+    width: 10px;
+    img {
+      width: 100%;
+    }
+  }
+  .rank-old {
+    top: 105px;
+  }
+  .rank-children {
+    top: 155px;
+  }
+  .rank-intimate {
+    top: 205px;
+  }
+  .rank-other {
+    top: 255px;
+  }
+  .rank-LowIncome {
+    top: 324px;
+  }
+  .rank-disabled {
+    top: 351px;
+  }
+
+  .rank-bar {
+    position: relative;
+    width: 130px;
+    height: 8px;
+    background-color: #26bf65; // Old browsers
+    @include filter-gradient(#26bf65, #d82700, horizontal); // IE6-9
+    @include background-image(linear-gradient(left,  #26bf65 0%,#faff00 50%,#d82700 100%));
+    span {
+      position: absolute;
+      top: -7px;
+      font-size: 14px;
+    }
+    .low {
+      left: -14px;
+    }
+    .high {
+      right: -30px;
+    }
+  }
+}
+
+
+.chart {
+  margin-left: 35px;
+  margin-top: 30px;
+}
+
 .statistic {
   display: inline-block;
-}
-.top10 {
-  display: inline-block;
-  text-align: center;
-  width: 220px;
-  margin-top: 20px;
-  vertical-align: top;
-  h3 {
-    font-size: 18px;
+  &.age {
+    margin-left: 37px;
   }
-}
-// .top10 ul {
-//   width: 55px;
-//   margin: 10px auto 0;
-//   list-style-type: decimal;
-// }
-// .top5 ul {
-//   width: 55px;
-//   margin-left: 20px;
-//   list-style-type: decimal;
-// }
-.village-top10 {
-  ul {
-    height: 280px;
-    overflow-x: auto;
-    width: 82px;
-    padding-left: 47px;
-  }
-}
-.top5 {
-  display: block;
-}
-
-
-
-
-
-
-
-
-#details {
-  position:absolute;
-  width:300px;
-  top:20px;
-  right:20px;
-  z-index: 1;
-}
-
-#details p.lead {
-  display: none;
-}
-
-.tooltip {
-	position: absolute;
-	width: 170px;
-	height: auto;
-	padding: 10px;
-	background-color: white;
-	-webkit-border-radius: 10px;
-	-moz-border-radius: 10px;
-	border-radius: 10px;
-	-webkit-box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.4);
-	-moz-box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.4);
-	box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.4);
-	pointer-events: none;
-}
-
-.tooltip.hidden {
-	display: none;
-}
-
-.tooltip p {
-	margin: 0;
-	font-family: sans-serif;
-	font-size: 16px;
-	line-height: 20px;
-}
-
-.axis {
-  font-size: 14px;
-  fill: #FFF;
-}
-.axis path {
-  fill: none;
-  stroke: #999;
-  stroke-width: 2;
-}
-.domain, .tick line {
-  stroke: gray;
-  stroke-width: 1;
-}
-
-.distribution-Statistics2 text {
-  /*display: none;*/
 }
