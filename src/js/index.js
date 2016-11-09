@@ -8,7 +8,7 @@
   /*案件類型直條圖*/
   function setChart(pData) {
     console.log('pData = ', pData);
-    // d3.csv("data/case_type_statistics.csv", stringToNum, function(pData) {
+    // d3.csv("data/case_type.csv", stringToNum, function(pData) {
       for (var i = 0; i < pData.length; i++) {
         if (pData[i]['案件類型'] === '老人保護') {
           pData['老人保護'] = pData[i]['總案件量'];
@@ -42,7 +42,7 @@
         .domain(data.map(function(d) {return d.type;}))
         .rangeBands([0, height], 0.15);
 
-      var svg = d3.select(".distribution-Statistics")
+      var svg = d3.select(".chart-cont")
         .append("svg")
         .attr("width", svg_width)
         .attr("height", svg_height);
